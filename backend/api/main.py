@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
+from backend.api.upload import router as upload_router
 from backend.core.config import settings
 from backend.services.document_service import DocumentService
 
@@ -11,6 +12,7 @@ app = FastAPI(
     description="Multimodal scientific document intelligence platform.",
 )
 
+app.include_router(upload_router)
 document_service = DocumentService()
 
 
