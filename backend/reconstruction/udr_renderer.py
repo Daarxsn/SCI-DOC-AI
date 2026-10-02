@@ -28,12 +28,18 @@ class UdrRenderMapper:
                     )
                 )
 
+            page_metadata = {}
+            source_page_path = getattr(page, "source_page_path", None)
+            if source_page_path:
+                page_metadata["source_page_path"] = source_page_path
+
             pages.append(
                 RenderPage(
                     page_number=page.page_number,
                     width=page.width,
                     height=page.height,
                     elements=elements,
+                    metadata=page_metadata,
                 )
             )
 
