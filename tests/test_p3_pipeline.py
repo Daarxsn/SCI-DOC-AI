@@ -11,26 +11,23 @@ from backend.pipeline import end_to_end
 class FakeOcr:
     def extract(self, path):
         return OcrPageResult(
-            width=800,
-            height=400,
-            blocks=[OcrBlock(text="Force F = ma", confidence=0.99, x=20, y=20, width=200, height=30, words=[])],
-            engine="fake",
-            engine_version="test",
+            width=800, height=400,
+            blocks=[OcrBlock(
+                text="Force F = ma", confidence=0.99,
+                x=20, y=20, width=200, height=30,
+                words=[], reading_order=0
+            )],
+            engine="fake", engine_version="test",
         )
 
 
 class FakeEnrichment:
-    def __init__(self, **kwargs):
-        pass
-
-    def apply(self, document, image_paths):
-        return document
+    def __init__(self, **kwargs): pass
+    def apply(self, document, image_paths): return document
 
 
 class FakeTranslation:
-    def __init__(self, **kwargs):
-        pass
-
+    def __init__(self, **kwargs): pass
     def translate_document(self, document, target):
         for page in document.pages:
             for element in page.elements:
@@ -56,22 +53,15 @@ def test_p3_real_document_orchestration(monkeypatch):
     with TemporaryDirectory() as tmp:
         source = Path(tmp) / "input.png"
         Image.new("RGB", (800, 400), "white").save(source)
-
         config = Settings(ocr_provider="tesseract", translation_provider="rule-based-dev")
         result = end_to_end.ScientificDocumentPipeline(config).run(
-            source,
-            target_language="hi",
-            domain="physics",
+            source, target_language="hi", domain="physics"
         )
 
         assert result.stage_status == {
-            "input": "passed",
-            "preprocessing": "passed",
-            "ocr": "passed",
-            "udr": "passed",
-            "scientific_enrichment": "passed",
-            "translation": "passed",
-            "validation": "passed",
+            "input": "passed", "preprocessing": "passed", "ocr": "passed",
+            "udr": "passed", "scientific_enrichment": "passed",
+            "translation": "passed", "validation": "passed",
             "reconstruction": "skipped",
         }
         assert result.document.pages
