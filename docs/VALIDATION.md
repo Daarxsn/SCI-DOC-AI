@@ -1,36 +1,36 @@
-# Scientific Validation — M5
+# Scientific Validation — M5 Complete
 
-M5 adds a cross-domain validation layer over the UDR after translation and before reconstruction.
+M5 is the unified validation stage between translation and reconstruction/export.
 
-## Validation areas
-
-- document/language compatibility;
-- question and subquestion integrity;
-- duplicate question numbers;
-- equation representation and LaTeX structure;
-- diagram structural completeness;
-- translation confidence and review state.
+## Layers
+1. Scientific structure and question integrity.
+2. Mathematical representation validation.
+3. Diagram relationship integrity.
+4. Translation consistency.
+5. Provenance/model diagnostics.
+6. Reconstruction layout validation.
+7. Unified export decision.
 
 ## Severity
+- critical/error: export blocked.
+- warning: human review required.
+- info: diagnostic only.
 
-- **critical** — structural/scientific integrity is unsafe; export is blocked.
-- **error** — document integrity is invalid; export is blocked.
-- **warning** — human review is required.
-- **info** — informational diagnostic.
+The export decision is true only when no blocking or review-required findings exist.
 
-## Export policy
+## Mathematical boundary
+The current equivalence check is deliberately conservative: it normalizes whitespace, braces, and a small notation set. It does not claim algebraic equivalence, theorem proving, or CAS-level semantics.
 
-A document is exportable only when it has no critical/error issues and no warning-level review requirements.
+## Provenance
+Missing extractor/model provenance is surfaced rather than invented.
 
-This is intentionally conservative for scientific documents: a translated exam paper should not be released automatically when the system detects unresolved scientific or translation uncertainty.
-
-## M5 foundation
-
-The validator is domain-aware through the UDR element types and document domain. Specialized mathematics, physics, biology, terminology, and translation checks can be plugged into the same report.
-
-The next M5 slices can add:
-- equation semantic equivalence;
-- diagram relationship integrity;
-- translation source/target consistency;
-- reconstruction-layout validation integration;
-- validation provenance and model versions.
+## Acceptance criteria
+- [x] Cross-domain scientific validation
+- [x] Mathematical representation validation
+- [x] Diagram relationship integrity
+- [x] Translation consistency
+- [x] Provenance/model diagnostics
+- [x] Reconstruction layout validation
+- [x] Unified report
+- [x] Explicit export decision
+- [x] Complete-pipeline tests
