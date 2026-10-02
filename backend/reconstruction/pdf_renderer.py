@@ -1,6 +1,9 @@
 from pathlib import Path
 
+from backend.reconstruction.equation_renderer import EquationRenderer
+from backend.reconstruction.image_renderer import ImageRenderer
 from backend.reconstruction.models import RenderDocument
+from backend.reconstruction.table_renderer import TableRenderer
 from backend.reconstruction.text_fitter import TextFitter
 
 
@@ -10,10 +13,16 @@ class PdfRenderer:
         text_fitter: TextFitter | None = None,
         font_path: str | None = None,
         font_name: str = "SCI_DOC_UNICODE",
+        equation_renderer: EquationRenderer | None = None,
+        table_renderer: TableRenderer | None = None,
+        image_renderer: ImageRenderer | None = None,
     ) -> None:
         self.text_fitter = text_fitter or TextFitter()
         self.font_path = font_path
         self.font_name = font_name
+        self.equation_renderer = equation_renderer or EquationRenderer()
+        self.table_renderer = table_renderer or TableRenderer()
+        self.image_renderer = image_renderer or ImageRenderer()
 
     def _register_font(self, pdfmetrics) -> str:
         if not self.font_path:
@@ -45,6 +54,15 @@ class PdfRenderer:
             pdf.setPageSize((page.width, page.height))
 
             for element in page.elements:
+                if element.element_type == "table":
+                    self.table_renderer.draw(pdf, element, page.height)
+                    continue
+                if element.element_type == "image":
+                    self.image_renderer.draw(pdf, element, page.height)
+                    continue
+                if element.element_type == "equation":
+                    self.equation_renderer.draw(pdf, element, page.height)
+                    continue
                 if not element.text:
                     continue
 
@@ -57,8 +75,6 @@ class PdfRenderer:
                     continue
 
                 pdf.setFont(font_name, fit.font_size)
-
-                # UDR coordinates use a top-left origin; PDF uses bottom-left.
                 y = page.height - element.y - fit.font_size
 
                 for line in fit.lines:
