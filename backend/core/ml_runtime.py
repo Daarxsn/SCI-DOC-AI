@@ -6,15 +6,24 @@ def package_available(package_name: str) -> bool:
 
 
 def runtime_status() -> dict[str, bool]:
-    """Return availability of optional P1 ML packages.
-
-    This performs no model download or heavyweight import. It is safe to use
-    from health/diagnostic tooling before an ML environment is installed.
-    """
+    """Return optional ML package availability without loading model weights."""
     return {
+        "paddlepaddle": package_available("paddle"),
         "paddleocr": package_available("paddleocr"),
         "torch": package_available("torch"),
         "transformers": package_available("transformers"),
         "sentencepiece": package_available("sentencepiece"),
+        "ultralytics": package_available("ultralytics"),
+        "pix2tex": package_available("pix2tex"),
         "pytesseract": package_available("pytesseract"),
     }
+
+
+def select_device(requested: str = "auto") -> str:
+    if requested and requested != "auto":
+        return requested
+    try:
+        import torch
+        return "cuda" if torch.cuda.is_available() else "cpu"
+    except ImportError:
+        return "cpu"
