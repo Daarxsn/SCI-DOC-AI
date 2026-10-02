@@ -1,47 +1,15 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-
+from fastapi import FastAPI
+from backend.api.jobs import router as jobs_router
 from backend.api.upload import router as upload_router
-from backend.core.config import settings
-from backend.services.document_service import DocumentService
 
-
-app = FastAPI(
-    title=settings.app_name,
-    version=settings.api_version,
-    description="Multimodal scientific document intelligence platform.",
-)
-
+app = FastAPI(title="SCI-DOC AI", version="0.7.0", description="Enterprise scientific document intelligence, translation, validation, and reconstruction API.")
 app.include_router(upload_router)
-document_service = DocumentService()
+app.include_router(jobs_router)
 
+@app.get("/health", tags=["system"])
+def health():
+    return {"status":"ok","service":"sci-doc-ai"}
 
-class AnalyzeRequest(BaseModel):
-    document_type: str = "question_paper"
-    source_language: str = "en"
-    mime_type: str
-    domain: str = "general"
-
-
-@app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok", "service": settings.app_name}
-
-
-@app.post("/api/v1/documents/analyze")
-def analyze_document(request: AnalyzeRequest) -> dict:
-    try:
-        udr = document_service.create_initial_udr(
-            document_type=request.document_type,
-            source_language=request.source_language,
-            mime_type=request.mime_type,
-            domain=request.domain,
-        )
-    except ValueError as exc:
-        raise HTTPException(status_code=415, detail=str(exc)) from exc
-
-    return {
-        "status": "accepted",
-        "stage": "m0_udr",
-        "udr": udr.model_dump(mode="json"),
-    }
+@app.get("/ready", tags=["system"])
+def ready():
+    return {"status":"ready","service":"sci-doc-ai"}
