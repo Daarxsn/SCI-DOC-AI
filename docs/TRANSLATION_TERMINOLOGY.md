@@ -1,29 +1,35 @@
-# Scientific Translation and Terminology
+# Translation Memory and Scientific Terminology
 
-Translation is element-aware rather than a single generic text operation.
+## Translation Memory
 
-## Policy
+Translation memory stores approved source/target pairs scoped by:
 
-- Ordinary prose → translation adapter.
-- Equations → specialized mathematics path + review.
-- Diagrams/graphs → translate semantic labels while preserving structure.
-- Images/page numbers → preserve.
-- Low-confidence translation → human review.
+- source language;
+- target language;
+- scientific domain;
+- exact source text.
 
-## Terminology
+An exact memory hit is returned with confidence 1.0 and marked as originating from translation memory.
 
-The terminology registry stores controlled scientific vocabulary by target language and domain.
+## Terminology Registry
 
-Each entry can specify:
+Terminology entries are scoped by source language, target language, and domain. Longer terms are protected before shorter terms so overlapping terminology can be handled deterministically.
 
-- source term;
-- approved target term;
-- domain;
-- whether the original must be preserved;
-- provenance/notes.
+Protected terms are replaced after the translation adapter returns.
 
-## Adapter Strategy
+## Priority
 
-The initial rule-based adapter is only a deterministic development adapter. A production NMT/LLM translation provider can implement the same adapter contract without changing UDR or validation layers.
+The intended translation priority is:
 
-The translation layer must never silently overwrite equations, scientific symbols, or specialized diagram structures.
+1. approved translation-memory exact match;
+2. protected scientific terminology;
+3. configured translation model/adapter;
+4. human review for low-confidence or unresolved content.
+
+## Governance
+
+Translation memory should contain approved translations only. Model-generated translations should not automatically become permanent memory entries without an approval workflow.
+
+## Current limitation
+
+The terminology protection path currently uses deterministic string replacement. Production deployment should add token-aware matching and morphology/context rules for inflected scientific language.
