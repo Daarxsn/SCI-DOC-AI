@@ -7,6 +7,12 @@ class Settings(BaseSettings):
     debug: bool = False
     max_upload_size_mb: int = 50
 
+    # P1 model configuration. Large ML runtimes remain optional.
+    ocr_provider: str = "tesseract"
+    ocr_language: str = "eng"
+    translation_provider: str = "rule-based-dev"
+    translation_model: str = "facebook/nllb-200-distilled-600M"
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
