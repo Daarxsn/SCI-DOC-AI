@@ -1,48 +1,33 @@
 # Document Reconstruction
 
-The reconstruction layer converts validated UDR elements back into a paginated document.
-
-## Pipeline
-
 UDR → RenderDocument → scientific render plan → layout/composition → PDF.
 
-## Render Contracts
+## Current renderers
 
-| UDR element | Reconstruction adapter | Current baseline |
-|---|---|---|
-| text/question/heading | text fitter + PDF renderer | rendered |
-| equation | equation renderer | text fallback; specialized typesetting pending |
-| diagram/graph | diagram renderer | structured geometry rendered when coordinates exist |
-| table | table renderer | PDF grid rendered |
-| image | image renderer | positioned asset rendered |
+| Element | Baseline |
+|---|---|
+| Text | PDF rendering + optional Unicode raster path |
+| Equation | Controlled Unicode fallback; dedicated typesetting pending |
+| Diagram | Structured geometry when coordinates exist |
+| Table | PDF grid |
+| Image | Positioned asset |
 
-## Diagram Reconstruction
+## Indic text
 
-The baseline diagram renderer consumes structured UDR metadata:
+With a licensed Unicode/Devanagari-capable TrueType font configured, text can be rasterized through Pillow before placement into the PDF. This provides a practical shaping path for Hindi/Marathi output without claiming that basic ReportLab text APIs perform complex-script shaping.
 
-- object bounding boxes;
-- label coordinates;
-- relationship source/target points.
-
-It draws those primitives relative to the diagram bounding box. If detector metadata has no geometry, the renderer does not invent positions and reports an adapter-required state in its render plan.
-
-This is deliberately conservative: reconstructed scientific diagrams must be traceable to detected structure.
+Fonts are not bundled in the repository.
 
 ## Equations
 
-Equations currently use a text fallback. LaTeX and MathML are preserved in the render contract so a specialized typesetting adapter can be plugged in without changing UDR.
+LaTeX/MathML metadata is preserved. A small controlled LaTeX-symbol normalization provides a deterministic fallback. Full LaTeX/MathML typesetting remains a separate adapter.
 
-## Fonts
+## Export safety
 
-Hindi/Marathi output requires a licensed Unicode/Devanagari-capable font supplied by deployment. Fonts are not bundled in this repository.
+The validation review gate must run before export. Reconstruction itself does not override validation failures.
 
-## Validation Gate
+## Known limitations
 
-Reconstruction is an export stage, not a validation stage. The production orchestration layer must call the validation review gate before export and must not silently export a document that failed validation.
-
-## Known Prototype Limitations
-
-- ReportLab's basic text drawing is not a complete complex-script shaping engine.
-- Equation visual typesetting is not yet implemented.
-- Diagram semantics such as arrows, symbols, domain-specific shapes, and connector routing are not yet fully reconstructed.
+- Full LaTeX/MathML typesetting is pending.
+- Diagram semantics and domain-specific shapes are only partially reconstructed.
 - Visual fidelity has not yet been benchmarked against real client documents.
