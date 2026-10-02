@@ -22,7 +22,7 @@ class FakeOcr:
 
 
 class FakeEnrichment:
-    def __init__(self, **kwargs): pass
+    def __init__(self, *args, **kwargs): pass
     def apply(self, document, image_paths): return document
 
 
