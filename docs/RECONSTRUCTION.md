@@ -1,8 +1,14 @@
 # Document Reconstruction
 
-UDR → RenderDocument → scientific render plan → layout/composition → PDF.
+UDR → RenderDocument → layout validation/composition → scientific renderers → PDF.
 
-## Current renderers
+## Layout Safety
+
+The reconstruction layout engine checks every page for horizontal/vertical overflow, configured margin violations, element collisions, and deterministic z-order.
+
+Overlaps are warnings because some documents intentionally layer annotations or images. Page overflow is an error because content outside the page cannot be safely reconstructed.
+
+## Renderers
 
 | Element | Baseline |
 |---|---|
@@ -12,22 +18,10 @@ UDR → RenderDocument → scientific render plan → layout/composition → PDF
 | Table | PDF grid |
 | Image | Positioned asset |
 
-## Indic text
+## Export
 
-With a licensed Unicode/Devanagari-capable TrueType font configured, text can be rasterized through Pillow before placement into the PDF. This provides a practical shaping path for Hindi/Marathi output without claiming that basic ReportLab text APIs perform complex-script shaping.
+Layout diagnostics are exposed separately from rendering so the orchestration/API layer can require human review when reconstruction introduces a collision or overflow.
 
-Fonts are not bundled in the repository.
+The validation review gate must still run before export.
 
-## Equations
-
-LaTeX/MathML metadata is preserved. A small controlled LaTeX-symbol normalization provides a deterministic fallback. Full LaTeX/MathML typesetting remains a separate adapter.
-
-## Export safety
-
-The validation review gate must run before export. Reconstruction itself does not override validation failures.
-
-## Known limitations
-
-- Full LaTeX/MathML typesetting is pending.
-- Diagram semantics and domain-specific shapes are only partially reconstructed.
-- Visual fidelity has not yet been benchmarked against real client documents.
+Automatic collision resolution is intentionally not implemented yet; diagnostics are safer than silently moving scientific content.
