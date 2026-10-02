@@ -1,12 +1,6 @@
-from uuid import uuid4
-
 from backend.translation.adapter import TranslationAdapter
-from backend.translation.models import (
-    TranslationLanguage,
-    TranslationStatus,
-    TranslationUnit,
-)
-from backend.translation.policies import TranslationAction, TranslationPolicy
+from backend.translation.memory import TranslationMemory
+from backend.translation.models import TranslationLanguage, TranslationStatus, TranslationUnit
 from backend.translation.terminology import TerminologyRegistry
 
 
@@ -15,64 +9,59 @@ class TranslationService:
         self,
         adapter: TranslationAdapter,
         terminology: TerminologyRegistry | None = None,
-        policy: TranslationPolicy | None = None,
+        memory: TranslationMemory | None = None,
     ) -> None:
         self.adapter = adapter
         self.terminology = terminology or TerminologyRegistry()
-        self.policy = policy or TranslationPolicy()
+        self.memory = memory or TranslationMemory()
 
     def translate(
         self,
-        *,
         source_text: str,
         source_language: TranslationLanguage,
         target_language: TranslationLanguage,
-        element_type,
         domain: str,
-        context: str | None = None,
+        element_type: str = "paragraph",
     ) -> TranslationUnit:
-        unit = TranslationUnit(
-            unit_id=f"tr-{uuid4().hex[:12]}",
-            source_text=source_text,
-            source_language=source_language,
-            target_language=target_language,
-        )
-
-        action = self.policy.action_for(element_type)
-
-        if action == TranslationAction.PRESERVE:
-            unit.target_text = source_text
-            unit.status = TranslationStatus.SKIPPED
-            unit.confidence = 1.0
-            return unit
-
-        if action == TranslationAction.SPECIALIZED:
-            unit.target_text = source_text
-            unit.status = TranslationStatus.REVIEW
-            unit.confidence = 0.0
-            unit.metadata["reason"] = "specialized_scientific_element"
-            return unit
-
-        translated, confidence = self.adapter.translate(
+        memory_entry = self.memory.lookup(
             source_text,
+            source_language.value,
+            target_language.value,
+            domain,
+        )
+
+        if memory_entry:
+            return TranslationUnit(
+                source_text=source_text,
+                target_text=memory_entry.target_text,
+                source_language=source_language,
+                target_language=target_language,
+                status=TranslationStatus.TRANSLATED,
+                confidence=1.0,
+                terminology_ids=[],
+                metadata={"source": "translation_memory", "memory_version": memory_entry.version},
+            )
+
+        protected_text, replacements = self.terminology.protect_terms(
+            source_text,
+            source_language.value,
+            target_language.value,
+            domain,
+        )
+
+        result = self.adapter.translate(
+            protected_text,
             source_language=source_language,
             target_language=target_language,
-            context=context,
-        )
-
-        translated, terminology_ids = self.terminology.apply(
-            translated,
-            language=target_language.value,
             domain=domain,
+            element_type=element_type,
         )
 
-        unit.target_text = translated
-        unit.confidence = confidence
-        unit.terminology_ids = terminology_ids
-        unit.status = (
-            TranslationStatus.REVIEW
-            if confidence < 0.6
-            else TranslationStatus.TRANSLATED
-        )
+        translated = result.target_text
+        for token, target_term in replacements.items():
+            translated = translated.replace(token, target_term)
 
-        return unit
+        result.target_text = translated
+        result.terminology_ids = list(replacements.values())
+
+        return result
