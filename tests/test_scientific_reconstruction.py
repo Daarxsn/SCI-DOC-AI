@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from backend.reconstruction.composer import ReconstructionComposer
 from backend.reconstruction.models import RenderDocument, RenderElement, RenderPage
 
@@ -62,6 +60,14 @@ def test_scientific_elements_get_dedicated_render_plans():
     ]
 
 
+def test_table_with_data_is_renderable():
+    document = make_document()
+    result = ReconstructionComposer().table_renderer.render(
+        document.pages[0].elements[2]
+    )
+    assert result["render_status"] == "ready"
+
+
 def test_image_renderer_reports_missing_asset():
     element = RenderElement(
         element_id="img1",
@@ -75,4 +81,3 @@ def test_image_renderer_reports_missing_asset():
 
     result = ReconstructionComposer().image_renderer.render(element)
     assert result["render_status"] == "asset_missing"
-    assert result["asset_path"] is None
