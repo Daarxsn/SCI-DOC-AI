@@ -26,9 +26,11 @@ class RenderPage(BaseModel):
     width: float = Field(gt=0)
     height: float = Field(gt=0)
     elements: list[RenderElement] = Field(default_factory=list)
+    metadata: dict = Field(default_factory=dict)
 
 
 class RenderDocument(BaseModel):
     document_id: str
     pages: list[RenderPage]
     output_format: OutputFormat = OutputFormat.PDF
+    metadata: dict = Field(default_factory=dict)
