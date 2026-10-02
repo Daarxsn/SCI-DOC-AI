@@ -4,28 +4,35 @@ The reconstruction layer converts validated UDR elements back into a paginated d
 
 ## Pipeline
 
-UDR → RenderDocument → text fitting → PDF renderer.
+UDR → RenderDocument → scientific render plan → layout/composition → PDF.
 
-## Coordinate System
+## Render Contracts
 
-UDR coordinates use a top-left origin. The PDF renderer converts the Y coordinate to ReportLab's bottom-left coordinate system.
+Scientific content is not treated as ordinary prose.
 
-## Current Baseline
+| UDR element | Reconstruction adapter | Current baseline |
+|---|---|---|
+| text/question/heading | text fitter + PDF renderer | rendered |
+| equation | equation renderer | LaTeX/MathML contract; specialized drawing pending |
+| diagram/graph | diagram renderer | structured graph preserved; visual drawing pending |
+| table | table renderer | normalized grid contract; visual drawing pending |
+| image | image renderer | asset resolution contract |
 
-The renderer currently provides a deterministic text-first PDF baseline:
+## Why This Separation Exists
 
-- preserves UDR page dimensions;
-- uses translated `target_text` when available;
-- preserves element coordinates and bounding boxes;
-- fits long text into its source bounding box;
-- supports an externally supplied TrueType/Unicode font;
-- does not bundle third-party fonts.
+The UDR already carries scientific structure. Reconstruction should consume that structure rather than re-OCR the translated page or flatten scientific content into text.
 
-Configure a licensed Devanagari-capable font in the deployment environment for Hindi/Marathi output. The font path is passed to `PdfRenderer(font_path=...)`.
+This allows specialized renderers to be added independently:
 
-## Scientific Elements
+- LaTeX/MathML equation renderer
+- SVG/canvas diagram renderer
+- grid/table renderer
+- raster/vector image placement
+- complex-script text shaping
 
-Equations, diagrams, graphs, tables, and images remain typed UDR elements. Their dedicated renderers are intentionally separate from the text renderer so scientific content can be reconstructed without flattening it into ordinary prose.
+## Fonts
+
+Hindi/Marathi output requires a licensed Unicode/Devanagari-capable font supplied by deployment. Fonts are not bundled in this repository.
 
 ## Validation Gate
 
@@ -35,7 +42,5 @@ Reconstruction is an export stage, not a validation stage. The production orches
 
 - ReportLab's basic text drawing is a baseline and is not yet a full complex-script shaping engine.
 - Automatic font selection is not implemented.
-- Equation, diagram, table, and image rendering adapters are not yet complete.
+- Equation, diagram, table, and image visual drawing adapters are not yet complete.
 - Visual fidelity has not yet been benchmarked against real client documents.
-
-These limitations are explicit so the prototype does not claim production-grade reconstruction prematurely.
