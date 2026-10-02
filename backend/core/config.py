@@ -7,11 +7,16 @@ class Settings(BaseSettings):
     debug: bool = False
     max_upload_size_mb: int = 50
 
-    # P1 model configuration. Large ML runtimes remain optional.
     ocr_provider: str = "tesseract"
     ocr_language: str = "eng"
     translation_provider: str = "rule-based-dev"
     translation_model: str = "facebook/nllb-200-distilled-600M"
+
+    equation_provider: str = "baseline"
+    diagram_provider: str = "baseline"
+    diagram_model: str = ""
+    model_cache_dir: str | None = None
+    ml_device: str = "auto"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
