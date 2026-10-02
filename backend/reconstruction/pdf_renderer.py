@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from backend.reconstruction.diagram_renderer import DiagramRenderer
 from backend.reconstruction.equation_renderer import EquationRenderer
 from backend.reconstruction.image_renderer import ImageRenderer
 from backend.reconstruction.models import RenderDocument
@@ -14,6 +15,7 @@ class PdfRenderer:
         font_path: str | None = None,
         font_name: str = "SCI_DOC_UNICODE",
         equation_renderer: EquationRenderer | None = None,
+        diagram_renderer: DiagramRenderer | None = None,
         table_renderer: TableRenderer | None = None,
         image_renderer: ImageRenderer | None = None,
     ) -> None:
@@ -21,6 +23,7 @@ class PdfRenderer:
         self.font_path = font_path
         self.font_name = font_name
         self.equation_renderer = equation_renderer or EquationRenderer()
+        self.diagram_renderer = diagram_renderer or DiagramRenderer()
         self.table_renderer = table_renderer or TableRenderer()
         self.image_renderer = image_renderer or ImageRenderer()
 
@@ -54,6 +57,9 @@ class PdfRenderer:
             pdf.setPageSize((page.width, page.height))
 
             for element in page.elements:
+                if element.element_type in {"diagram", "graph"}:
+                    self.diagram_renderer.draw(pdf, element, page.height)
+                    continue
                 if element.element_type == "table":
                     self.table_renderer.draw(pdf, element, page.height)
                     continue
