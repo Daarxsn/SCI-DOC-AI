@@ -1,0 +1,19 @@
+{
+  "dataset_id": "sci-doc-golden",
+  "version": "0.1.0",
+  "description": "Versioned benchmark manifest for multimodal scientific document intelligence.",
+  "annotation_schema_version": "1.0",
+  "cases": [
+    {"case_id":"mathematics-hi-001","domain":"mathematics","source_language":"en","target_language":"hi","split":"test","input_path":"assets/mathematics/mathematics-hi-001.png","reference_path":"references/mathematics/mathematics-hi-001.json","annotation_path":"annotations/mathematics/mathematics-hi-001.json"},
+    {"case_id":"mathematics-mr-001","domain":"mathematics","source_language":"en","target_language":"mr","split":"test","input_path":"assets/mathematics/mathematics-mr-001.png","reference_path":"references/mathematics/mathematics-mr-001.json","annotation_path":"annotations/mathematics/mathematics-mr-001.json"},
+    {"case_id":"physics-hi-001","domain":"physics","source_language":"en","target_language":"hi","split":"test","input_path":"assets/physics/physics-hi-001.png","reference_path":"references/physics/physics-hi-001.json","annotation_path":"annotations/physics/physics-hi-001.json"},
+    {"case_id":"physics-mr-001","domain":"physics","source_language":"en","target_language":"mr","split":"test","input_path":"assets/physics/physics-mr-001.png","reference_path":"references/physics/physics-mr-001.json","annotation_path":"annotations/physics/physics-mr-001.json"},
+    {"case_id":"biology-hi-001","domain":"biology","source_language":"en","target_language":"hi","split":"test","input_path":"assets/biology/biology-hi-001.png","reference_path":"references/biology/biology-hi-001.json","annotation_path":"annotations/biology/biology-hi-001.json"},
+    {"case_id":"biology-mr-001","domain":"biology","source_language":"en","target_language":"mr","split":"test","input_path":"assets/biology/biology-mr-001.png","reference_path":"references/biology/biology-mr-001.json","annotation_path":"annotations/biology/biology-mr-001.json"}
+  ],
+  "metadata": {
+    "status": "fixture-manifest",
+    "real_benchmark_results_available": false,
+    "notes": "Cases define the benchmark contract; source/reference assets are added only when redistribution rights and annotations are available."
+  }
+}
