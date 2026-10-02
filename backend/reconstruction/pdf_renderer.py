@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from backend.reconstruction.background import BackgroundResolver
 from backend.reconstruction.diagram_renderer import DiagramRenderer
 from backend.reconstruction.equation_renderer import EquationRenderer
 from backend.reconstruction.image_renderer import ImageRenderer
@@ -10,9 +11,18 @@ from backend.reconstruction.unicode_renderer import UnicodeTextRenderer
 
 
 class PdfRenderer:
-    def __init__(self, text_fitter=None, font_path=None, font_name="SCI_DOC_UNICODE",
-                 equation_renderer=None, diagram_renderer=None, table_renderer=None,
-                 image_renderer=None, unicode_renderer=None):
+    def __init__(
+        self,
+        text_fitter=None,
+        font_path=None,
+        font_name="SCI_DOC_UNICODE",
+        equation_renderer=None,
+        diagram_renderer=None,
+        table_renderer=None,
+        image_renderer=None,
+        unicode_renderer=None,
+        background_resolver=None,
+    ):
         self.text_fitter = text_fitter or TextFitter()
         self.font_path = font_path
         self.font_name = font_name
@@ -21,6 +31,7 @@ class PdfRenderer:
         self.diagram_renderer = diagram_renderer or DiagramRenderer()
         self.table_renderer = table_renderer or TableRenderer()
         self.image_renderer = image_renderer or ImageRenderer()
+        self.background_resolver = background_resolver or BackgroundResolver()
 
     def _register_font(self, pdfmetrics):
         if not self.font_path:
@@ -31,6 +42,32 @@ class PdfRenderer:
         from reportlab.pdfbase.ttfonts import TTFont
         pdfmetrics.registerFont(TTFont(self.font_name, str(font_file)))
         return self.font_name
+
+    def _draw_background(self, pdf, page):
+        path = self.background_resolver.resolve(page)
+        if not path:
+            return
+        pdf.drawImage(
+            str(path),
+            0,
+            0,
+            width=page.width,
+            height=page.height,
+            preserveAspectRatio=False,
+            mask="auto",
+        )
+
+    def _cover_text_region(self, pdf, element, page_height):
+        pdf.setFillColorRGB(1, 1, 1)
+        pdf.rect(
+            element.x,
+            page_height - element.y - element.height,
+            element.width,
+            element.height,
+            stroke=0,
+            fill=1,
+        )
+        pdf.setFillColorRGB(0, 0, 0)
 
     def render(self, document: RenderDocument, output_path: str | Path) -> Path:
         try:
@@ -46,28 +83,52 @@ class PdfRenderer:
 
         for page in document.pages:
             pdf.setPageSize((page.width, page.height))
+            self._draw_background(pdf, page)
+
             for element in page.elements:
-                if element.element_type in {"diagram", "graph"}:
-                    self.diagram_renderer.draw(pdf, element, page.height); continue
+                if element.element_type in {"diagram", "graph", "image"}:
+                    if element.element_type in {"diagram", "graph"}:
+                        self.diagram_renderer.draw(pdf, element, page.height)
+                    else:
+                        self.image_renderer.draw(pdf, element, page.height)
+                    continue
+
                 if element.element_type == "table":
-                    self.table_renderer.draw(pdf, element, page.height); continue
-                if element.element_type == "image":
-                    self.image_renderer.draw(pdf, element, page.height); continue
+                    self._cover_text_region(pdf, element, page.height)
+                    self.table_renderer.draw(pdf, element, page.height)
+                    continue
+
                 if element.element_type == "equation":
-                    self.equation_renderer.draw(pdf, element, page.height); continue
+                    self._cover_text_region(pdf, element, page.height)
+                    self.equation_renderer.draw(pdf, element, page.height)
+                    continue
+
                 if not element.text:
                     continue
-                if self.unicode_renderer.draw(pdf, element, page.height,
-                                              font_size=min(18, max(8, int(element.height * 0.55)))):
+
+                self._cover_text_region(pdf, element, page.height)
+
+                if self.unicode_renderer.draw(
+                    pdf, element, page.height,
+                    font_size=min(18, max(8, int(element.height * 0.55))),
+                ):
                     continue
-                fit = self.text_fitter.fit(element.text, box_width=element.width, box_height=element.height)
+
+                fit = self.text_fitter.fit(
+                    element.text,
+                    box_width=element.width,
+                    box_height=element.height,
+                )
                 if not fit.lines:
                     continue
+
                 pdf.setFont(font_name, fit.font_size)
                 y = page.height - element.y - fit.font_size
                 for line in fit.lines:
                     pdf.drawString(element.x, y, line)
                     y -= fit.font_size * 1.25
+
             pdf.showPage()
+
         pdf.save()
         return output
