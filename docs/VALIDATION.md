@@ -1,35 +1,36 @@
-# Scientific Document Validation
+# Scientific Validation — M5
 
-Validation is the quality gate between processing/translation and reconstruction.
+M5 adds a cross-domain validation layer over the UDR after translation and before reconstruction.
 
-## Validation Categories
+## Validation areas
 
-### Scientific
+- document/language compatibility;
+- question and subquestion integrity;
+- duplicate question numbers;
+- equation representation and LaTeX structure;
+- diagram structural completeness;
+- translation confidence and review state.
 
-- equation representation exists;
-- mathematics validation errors are absent;
-- specialized scientific elements are not silently degraded.
+## Severity
 
-### Structural
+- **critical** — structural/scientific integrity is unsafe; export is blocked.
+- **error** — document integrity is invalid; export is blocked.
+- **warning** — human review is required.
+- **info** — informational diagnostic.
 
-- question numbers are not duplicated;
-- question numbering gaps are reported;
-- required source text exists.
+## Export policy
 
-### Translation
+A document is exportable only when it has no critical/error issues and no warning-level review requirements.
 
-- low-confidence translation is routed to review;
-- specialized elements are not sent through generic translation.
+This is intentionally conservative for scientific documents: a translated exam paper should not be released automatically when the system detects unresolved scientific or translation uncertainty.
 
-### Confidence
+## M5 foundation
 
-Elements below the automatic acceptance threshold are flagged.
+The validator is domain-aware through the UDR element types and document domain. Specialized mathematics, physics, biology, terminology, and translation checks can be plugged into the same report.
 
-## Review Gate
-
-A document can only be auto-exported when it has:
-
-- zero critical issues;
-- zero warnings requiring review.
-
-The threshold and rules will become configurable after the golden evaluation dataset is established.
+The next M5 slices can add:
+- equation semantic equivalence;
+- diagram relationship integrity;
+- translation source/target consistency;
+- reconstruction-layout validation integration;
+- validation provenance and model versions.
