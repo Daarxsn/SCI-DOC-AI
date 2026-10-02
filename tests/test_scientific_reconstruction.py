@@ -30,9 +30,20 @@ def make_document():
                         height=200,
                         metadata={
                             "domain": "physics",
-                            "objects": [{"object_type": "arrow"}],
-                            "labels": [{"text": "v"}],
-                            "relationships": [],
+                            "objects": [
+                                {
+                                    "object_type": "box",
+                                    "bbox": {"x": 20, "y": 20, "width": 80, "height": 40},
+                                }
+                            ],
+                            "labels": [{"text": "v", "x": 30, "y": 35}],
+                            "relationships": [
+                                {
+                                    "relation": "points_to",
+                                    "source_point": {"x": 30, "y": 50},
+                                    "target_point": {"x": 120, "y": 50},
+                                }
+                            ],
                         },
                     ),
                     RenderElement(
@@ -55,7 +66,7 @@ def test_scientific_elements_get_dedicated_render_plans():
 
     assert [item["render_status"] for item in plan] == [
         "adapter_required",
-        "adapter_required",
+        "ready",
         "grid_adapter_required",
     ]
 
@@ -64,6 +75,14 @@ def test_table_with_data_is_renderable():
     document = make_document()
     result = ReconstructionComposer().table_renderer.render(
         document.pages[0].elements[2]
+    )
+    assert result["render_status"] == "ready"
+
+
+def test_diagram_with_geometry_is_renderable():
+    document = make_document()
+    result = ReconstructionComposer().diagram_renderer.render(
+        document.pages[0].elements[1]
     )
     assert result["render_status"] == "ready"
 
