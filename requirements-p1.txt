@@ -1,6 +1,9 @@
-# SCI-DOC AI P1 optional ML runtime
-# Install this in the dedicated ML/evaluation environment.
-paddleocr>=2.9,<3
-transformers>=4.45,<5
+# SCI-DOC AI P1 ML runtime
+# Keep these dependencies separate from the lightweight API runtime.
+paddlepaddle>=3,<4
+paddleocr>=3,<4
 torch>=2.4,<3
+transformers>=4.45,<6
 sentencepiece>=0.2,<1
+ultralytics>=8.3,<9
+pix2tex>=0.0.30,<1
