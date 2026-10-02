@@ -8,27 +8,29 @@ UDR → RenderDocument → scientific render plan → layout/composition → PDF
 
 ## Render Contracts
 
-Scientific content is not treated as ordinary prose.
-
 | UDR element | Reconstruction adapter | Current baseline |
 |---|---|---|
 | text/question/heading | text fitter + PDF renderer | rendered |
-| equation | equation renderer | LaTeX/MathML contract; specialized drawing pending |
-| diagram/graph | diagram renderer | structured graph preserved; visual drawing pending |
-| table | table renderer | normalized grid contract; visual drawing pending |
-| image | image renderer | asset resolution contract |
+| equation | equation renderer | text fallback; specialized typesetting pending |
+| diagram/graph | diagram renderer | structured geometry rendered when coordinates exist |
+| table | table renderer | PDF grid rendered |
+| image | image renderer | positioned asset rendered |
 
-## Why This Separation Exists
+## Diagram Reconstruction
 
-The UDR already carries scientific structure. Reconstruction should consume that structure rather than re-OCR the translated page or flatten scientific content into text.
+The baseline diagram renderer consumes structured UDR metadata:
 
-This allows specialized renderers to be added independently:
+- object bounding boxes;
+- label coordinates;
+- relationship source/target points.
 
-- LaTeX/MathML equation renderer
-- SVG/canvas diagram renderer
-- grid/table renderer
-- raster/vector image placement
-- complex-script text shaping
+It draws those primitives relative to the diagram bounding box. If detector metadata has no geometry, the renderer does not invent positions and reports an adapter-required state in its render plan.
+
+This is deliberately conservative: reconstructed scientific diagrams must be traceable to detected structure.
+
+## Equations
+
+Equations currently use a text fallback. LaTeX and MathML are preserved in the render contract so a specialized typesetting adapter can be plugged in without changing UDR.
 
 ## Fonts
 
@@ -40,7 +42,7 @@ Reconstruction is an export stage, not a validation stage. The production orches
 
 ## Known Prototype Limitations
 
-- ReportLab's basic text drawing is a baseline and is not yet a full complex-script shaping engine.
-- Automatic font selection is not implemented.
-- Equation, diagram, table, and image visual drawing adapters are not yet complete.
+- ReportLab's basic text drawing is not a complete complex-script shaping engine.
+- Equation visual typesetting is not yet implemented.
+- Diagram semantics such as arrows, symbols, domain-specific shapes, and connector routing are not yet fully reconstructed.
 - Visual fidelity has not yet been benchmarked against real client documents.
