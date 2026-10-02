@@ -1,27 +1,38 @@
 # Document Reconstruction
 
-UDR → RenderDocument → layout validation/composition → scientific renderers → PDF.
+UDR → RenderDocument → layout validation/composition → source-page baseline → scientific renderers → PDF.
 
-## Layout Safety
+## Source-Page Preservation
 
-The reconstruction layout engine checks every page for horizontal/vertical overflow, configured margin violations, element collisions, and deterministic z-order.
+When a processed source-page raster is available, reconstruction can use it as the page background. Text-like regions are then covered and replaced with translated content while non-text page artwork remains visible.
 
-Overlaps are warnings because some documents intentionally layer annotations or images. Page overflow is an error because content outside the page cannot be safely reconstructed.
+This is intended to preserve:
+
+- page borders and lines;
+- logos and watermarks;
+- stamps and visual marks;
+- diagrams/images that are not being replaced;
+- original page geometry.
+
+The source page path is carried in render-page metadata as `source_page_path`.
+
+## Important limitation
+
+The current cover operation uses a white rectangle. This is a baseline strategy, not true background-aware inpainting. It works best for clean scanned question papers with light backgrounds.
+
+Future work should add region-aware masking/inpainting and background classification so colored boxes, textured pages, and overlapping artwork are preserved.
 
 ## Renderers
 
 | Element | Baseline |
 |---|---|
 | Text | PDF rendering + optional Unicode raster path |
-| Equation | Controlled Unicode fallback; dedicated typesetting pending |
+| Equation | Controlled Unicode fallback |
 | Diagram | Structured geometry when coordinates exist |
 | Table | PDF grid |
 | Image | Positioned asset |
+| Source page | Optional raster background |
 
-## Export
+## Export safety
 
-Layout diagnostics are exposed separately from rendering so the orchestration/API layer can require human review when reconstruction introduces a collision or overflow.
-
-The validation review gate must still run before export.
-
-Automatic collision resolution is intentionally not implemented yet; diagnostics are safer than silently moving scientific content.
+Validation and layout diagnostics must run before export. Reconstruction must not silently ignore critical validation failures.
