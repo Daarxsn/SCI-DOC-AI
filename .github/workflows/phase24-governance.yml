@@ -1,0 +1,17 @@
+name: Phase 24 - Benchmark Governance
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  phase24:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p24_dataset_governance.py
+      - run: python -m py_compile backend/evaluation/phase24.py scripts/check_phase24_readiness.py
+      - run: test -f docs/PHASE24_BENCHMARK_GOVERNANCE.md
