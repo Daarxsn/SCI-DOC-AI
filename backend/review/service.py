@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import List
 
 from backend.review.models import (
     ReviewAction,
@@ -111,7 +112,7 @@ class ReviewService:
         )
         return item
 
-    def actions(self, review_id: str | None = None) -> list[ReviewAction]:
+    def actions(self, review_id: str | None = None) -> List[ReviewAction]:
         if review_id:
             return [x for x in self._actions if x.review_id == review_id]
         return list(self._actions)
