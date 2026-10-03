@@ -34,3 +34,13 @@ class RenderDocument(BaseModel):
     pages: list[RenderPage]
     output_format: OutputFormat = OutputFormat.PDF
     metadata: dict = Field(default_factory=dict)
+
+
+class ReconstructionArtifact(BaseModel):
+    document_id: str
+    format: OutputFormat
+    path: str
+    size_bytes: int = Field(ge=0)
+    sha256: str = Field(min_length=64, max_length=64)
+    page_count: int = Field(ge=0)
+    layout_warnings: int = Field(ge=0, default=0)
