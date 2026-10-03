@@ -11,7 +11,7 @@ if str(ROOT) not in sys.path:
 def main():
     print("=== SCI-DOC AI | PHASE 9 VERIFICATION ===", flush=True)
     result = subprocess.run(
-        [sys.executable, "-m", "pytest", "tests/test_p9_production.py", "-q"],
+        [sys.executable, "-m", "pytest", "tests/test_p9_production.py", "tests/test_p9_api_hardening.py", "-q"],
         cwd=ROOT,
     )
     if result.returncode:
