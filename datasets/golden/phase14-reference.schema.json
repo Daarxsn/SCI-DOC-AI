@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SCI-DOC AI Phase 14 Case Reference",
+  "type": "object",
+  "required": ["ocr_text", "translation_text"],
+  "properties": {
+    "ocr_text": {"type": "string"},
+    "translation_text": {"type": "string"},
+    "metadata": {"type": "object"}
+  }
+}

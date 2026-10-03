@@ -1,0 +1,25 @@
+name: Phase 14 - Real Benchmark Execution Contract
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  phase14:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install lightweight dependencies
+        run: pip install -r backend/requirements.txt
+      - name: Run Phase 14 contract tests
+        run: pytest -q tests/test_p14_execution.py
+      - name: Verify real execution files
+        run: |
+          test -f backend/evaluation/phase14.py
+          test -f scripts/run_phase14_real_benchmark.py
+          test -f datasets/golden/phase14-reference.schema.json
+          test -f docs/PHASE14_REAL_EXECUTION.md
