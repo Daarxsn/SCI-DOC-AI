@@ -1,0 +1,89 @@
+name: Phase 11 - Staging Verification
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    env:
+      SCI_DOC_API_KEY: phase11-ci-api-key
+      SCI_DOC_TENANT_ID: phase11-ci-tenant
+      POSTGRES_PASSWORD: phase11-postgres-password
+      MINIO_ROOT_USER: phase11-ci-admin
+      MINIO_ROOT_PASSWORD: phase11-minio-password
+      OCR_PROVIDER: tesseract
+      TRANSLATION_PROVIDER: rule-based-dev
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install API dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Run test suite
+        run: pytest -q
+
+      - name: Verify Phase 11 contract
+        run: python scripts/verify_phase11.py
+
+      - name: Validate staging Compose
+        run: docker compose -f docker-compose.staging.yml config
+
+      - name: Build staging API image
+        run: docker compose -f docker-compose.staging.yml build api
+
+      - name: Start staging stack
+        run: docker compose -f docker-compose.staging.yml up -d
+
+      - name: Verify staging health
+        run: |
+          python - <<'PY'
+          import json
+          import time
+          import urllib.request
+
+          for _ in range(30):
+              try:
+                  with urllib.request.urlopen("http://127.0.0.1:8000/health", timeout=3) as response:
+                      assert response.status == 200
+                      payload = json.load(response)
+                      assert payload["status"] == "ok"
+                      break
+              except Exception:
+                  time.sleep(2)
+          else:
+              raise SystemExit("staging health check failed")
+          PY
+
+      - name: Verify staging readiness
+        run: |
+          python - <<'PY'
+          import json
+          import urllib.request
+
+          with urllib.request.urlopen("http://127.0.0.1:8000/ready", timeout=5) as response:
+              assert response.status == 200
+              payload = json.load(response)
+              assert payload["status"] == "ready", payload
+          PY
+
+      - name: Show service status
+        if: always()
+        run: docker compose -f docker-compose.staging.yml ps
+
+      - name: Show API logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.staging.yml logs api
+
+      - name: Stop staging stack
+        if: always()
+        run: docker compose -f docker-compose.staging.yml down -v
