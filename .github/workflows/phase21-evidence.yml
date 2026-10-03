@@ -1,0 +1,17 @@
+name: Phase 21 - Benchmark Evidence Packaging
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  phase21:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p21_evidence_packaging.py
+      - run: python -m py_compile backend/evaluation/phase21.py scripts/package_phase21_result.py
+      - run: test -f docs/PHASE21_EVIDENCE_RELEASE.md
