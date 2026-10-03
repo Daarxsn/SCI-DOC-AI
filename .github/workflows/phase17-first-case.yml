@@ -1,0 +1,15 @@
+name: Phase 17 - First Real Golden Case Gate
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  first-case:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pytest -q tests/test_p17_first_case.py
+      - run: python -m py_compile scripts/prepare_phase17_case.py scripts/verify_phase17_first_case.py
