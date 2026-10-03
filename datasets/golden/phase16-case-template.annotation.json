@@ -1,0 +1,25 @@
+{
+  "case_id": "REPLACE_CASE_ID",
+  "annotation_schema_version": "1.0",
+  "pages": [
+    {
+      "page_number": 1,
+      "width": 0,
+      "height": 0,
+      "elements": [
+        {
+          "annotation_id": "REPLACE_CASE_ID-p1-e1",
+          "annotation_type": "text",
+          "element_id": "REPLACE_ELEMENT_ID",
+          "source_text": "HUMAN_VERIFIED_TEXT",
+          "target_text": "HUMAN_VERIFIED_TRANSLATION",
+          "bbox": {"x": 0, "y": 0, "width": 0, "height": 0},
+          "structured": {}
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "ground_truth_status": "VERIFIED"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "case_id": "REPLACE_CASE_ID",
+  "reference_schema_version": "1.0",
+  "ocr_text": "HUMAN_VERIFIED_SOURCE_TRANSCRIPTION",
+  "translation_text": "HUMAN_VERIFIED_TARGET_TRANSLATION",
+  "metadata": {
+    "source_language": "en",
+    "target_language": "hi-or-mr",
+    "domain": "mathematics-or-physics-or-biology",
+    "ground_truth_status": "VERIFIED"
+  }
+}
