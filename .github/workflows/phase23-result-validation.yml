@@ -1,0 +1,17 @@
+name: Phase 23 - Result Validation
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  phase23:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p23_release_validation.py
+      - run: python -m py_compile backend/evaluation/phase23.py scripts/validate_phase23_release.py
+      - run: test -f docs/PHASE23_RESULT_VALIDATION.md
