@@ -1,12 +1,19 @@
+from pathlib import Path
+
 from backend.schemas.udr import UdrDocument
 from backend.reconstruction.models import RenderDocument, RenderElement, RenderPage
 
 
 class UdrRenderMapper:
-    def map(self, document: UdrDocument) -> RenderDocument:
+    def map(
+        self,
+        document: UdrDocument,
+        source_page_paths: list[str | Path] | None = None,
+    ) -> RenderDocument:
         pages: list[RenderPage] = []
+        source_page_paths = source_page_paths or []
 
-        for page in document.pages:
+        for page_index, page in enumerate(document.pages):
             elements: list[RenderElement] = []
 
             for element in page.elements:
@@ -29,9 +36,8 @@ class UdrRenderMapper:
                 )
 
             page_metadata = {}
-            source_page_path = getattr(page, "source_page_path", None)
-            if source_page_path:
-                page_metadata["source_page_path"] = source_page_path
+            if page_index < len(source_page_paths):
+                page_metadata["source_page_path"] = str(source_page_paths[page_index])
 
             pages.append(
                 RenderPage(
