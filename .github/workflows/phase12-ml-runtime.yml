@@ -6,6 +6,9 @@ on:
 jobs:
   ml-runtime:
     runs-on: ubuntu-latest
+    env:
+      SCI_DOC_API_KEY: phase12-ci-api-key
+      SCI_DOC_TENANT_ID: phase12-ci-tenant
     steps:
       - name: Checkout
         uses: actions/checkout@v4
