@@ -19,4 +19,4 @@ def test_configured_nllb_reports_dependency_state_without_loading_weights():
 
 def test_runtime_endpoint_contract_exists():
     from backend.api.main import app
-    assert "/runtime" in {route.path for route in app.routes}
+    assert any(getattr(route, "path", None) == "/runtime" for route in app.routes)
