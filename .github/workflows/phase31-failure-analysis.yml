@@ -1,0 +1,23 @@
+name: Phase 31 - Failure Analysis
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase31.py"
+      - "scripts/run_phase31_failure_analysis.py"
+      - "tests/test_p31_failure_analysis.py"
+      - "docs/PHASE31_FAILURE_ANALYSIS.md"
+      - ".github/workflows/phase31-failure-analysis.yml"
+  workflow_dispatch:
+jobs:
+  phase31:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p31_failure_analysis.py
+      - run: python -m py_compile backend/evaluation/phase31.py scripts/run_phase31_failure_analysis.py
+      - run: test -f docs/PHASE31_FAILURE_ANALYSIS.md
