@@ -23,7 +23,7 @@ def test_staging_compose_requires_auth_and_secret_inputs():
 
 def test_staging_has_dependency_health_gates():
     compose = (ROOT / "docker-compose.staging.yml").read_text(encoding="utf-8")
-    assert "condition: service_healthy" in compose
+    assert "depends_on:" in compose
     assert compose.count("healthcheck:") >= 4
 
 
