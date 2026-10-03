@@ -21,3 +21,5 @@ jobs:
           python -m pip install -r backend/requirements.txt
       - name: Verify Phase 6
         run: python scripts/verify_phase6.py
+      - name: Verify provenance
+        run: python -m pytest tests/test_evaluation_provenance.py tests/test_optimization.py -q
