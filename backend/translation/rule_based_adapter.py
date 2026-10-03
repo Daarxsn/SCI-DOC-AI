@@ -25,3 +25,7 @@ class RuleBasedAdapter(TranslationAdapter):
         # Preserve source text when no translation model is configured.
         # Downstream code can still exercise validation/review workflows.
         return text, 0.1
+
+
+# Backward-compatible public name used by existing integrations and tests.
+RuleBasedTranslationAdapter = RuleBasedAdapter
