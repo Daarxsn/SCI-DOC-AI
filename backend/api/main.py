@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from backend.api.jobs import router as jobs_router
 from backend.api.upload import router as upload_router
+from backend.api.results import router as results_router
 from backend.core.production import check_production_readiness
 
 app = FastAPI(
@@ -10,6 +11,7 @@ app = FastAPI(
 )
 app.include_router(upload_router)
 app.include_router(jobs_router)
+app.include_router(results_router)
 
 @app.get("/health", tags=["system"])
 def health():
