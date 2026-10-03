@@ -1,0 +1,30 @@
+name: Phase 13 - Real Model Benchmark Contract
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  phase13:
+    runs-on: ubuntu-latest
+    env:
+      SCI_DOC_API_KEY: phase13-ci-api-key
+      SCI_DOC_TENANT_ID: phase13-ci-tenant
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install lightweight dependencies
+        run: pip install -r backend/requirements.txt
+      - name: Run Phase 13 tests
+        run: pytest -q tests/test_p13_real_runtime.py
+      - name: Verify benchmark contract
+        run: |
+          test -f datasets/golden/phase13-manifest.example.json
+          test -f docs/PHASE13_REAL_BENCHMARK.md
+          test -f scripts/activate_phase13_models.py
+          test -f scripts/run_phase13_benchmark.py
+      - name: Validate ML compose
+        run: docker compose -f docker-compose.ml.yml config

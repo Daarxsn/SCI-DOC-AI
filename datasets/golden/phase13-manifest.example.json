@@ -1,0 +1,14 @@
+{
+  "dataset_id": "sci-doc-real-golden",
+  "version": "1.0.0",
+  "benchmark_id": "phase13-real-benchmark-v1",
+  "description": "Controlled Phase 13 benchmark manifest. Real authorized assets are supplied from controlled storage.",
+  "cases": [
+    {"case_id": "mathematics-hi-001", "domain": "mathematics", "source_language": "en", "target_language": "hi", "input_path": "datasets/golden/assets/mathematics-hi-001.png"},
+    {"case_id": "mathematics-mr-001", "domain": "mathematics", "source_language": "en", "target_language": "mr", "input_path": "datasets/golden/assets/mathematics-mr-001.png"},
+    {"case_id": "physics-hi-001", "domain": "physics", "source_language": "en", "target_language": "hi", "input_path": "datasets/golden/assets/physics-hi-001.png"},
+    {"case_id": "physics-mr-001", "domain": "physics", "source_language": "en", "target_language": "mr", "input_path": "datasets/golden/assets/physics-mr-001.png"},
+    {"case_id": "biology-hi-001", "domain": "biology", "source_language": "en", "target_language": "hi", "input_path": "datasets/golden/assets/biology-hi-001.png"},
+    {"case_id": "biology-mr-001", "domain": "biology", "source_language": "en", "target_language": "mr", "input_path": "datasets/golden/assets/biology-mr-001.png"}
+  ]
+}
