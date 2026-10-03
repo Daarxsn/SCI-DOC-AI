@@ -31,7 +31,7 @@ def token_f1(prediction:str,reference:str)->float:
 def bbox_iou(a:dict,b:dict)->float:
     ax1,ay1,ax2,ay2=a["x"],a["y"],a["x"]+a["width"],a["y"]+a["height"]
     bx1,by1,bx2,by2=b["x"],b["y"],b["x"]+b["width"],b["y"]+b["height"]
-    ix1,iy1,ix2,iy2=max(ax1,bx1),max(ay1,by1),min(ax2,bx2),min(ay2,ay2)
+    ix1,iy1,ix2,iy2=max(ax1,bx1),max(ay1,by1),min(ax2,bx2),min(ay2,by2)
     inter=max(0,ix2-ix1)*max(0,iy2-iy1)
     union=a["width"]*a["height"]+b["width"]*b["height"]-inter
     return inter/union if union else 0.0
