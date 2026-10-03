@@ -1,0 +1,17 @@
+name: Phase 27 - Real Dataset Intake
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  phase27:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p27_dataset_intake.py
+      - run: python -m py_compile backend/evaluation/phase27.py scripts/run_phase27_intake.py
+      - run: test -f docs/PHASE27_REAL_DATASET_ACQUISITION.md
