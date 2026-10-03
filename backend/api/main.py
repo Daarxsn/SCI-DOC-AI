@@ -3,12 +3,9 @@ from backend.api.jobs import router as jobs_router
 from backend.api.upload import router as upload_router
 from backend.api.results import router as results_router
 from backend.core.production import check_production_readiness
+from backend.core.model_registry import runtime_status
 
-app = FastAPI(
-    title="SCI-DOC AI",
-    version="0.9.0",
-    description="Enterprise scientific document intelligence, translation, validation, and reconstruction API.",
-)
+app = FastAPI(title="SCI-DOC AI", version="1.0.0", description="Enterprise scientific document intelligence, translation, validation, and reconstruction API.")
 app.include_router(upload_router)
 app.include_router(jobs_router)
 app.include_router(results_router)
@@ -20,9 +17,8 @@ def health():
 @app.get("/ready", tags=["system"])
 def ready():
     readiness = check_production_readiness()
-    return {
-        "status": "ready" if readiness.ready else "not_ready",
-        "service": "sci-doc-ai",
-        "checks": readiness.checks,
-        "errors": readiness.errors,
-    }
+    return {"status": "ready" if readiness.ready else "not_ready", "service": "sci-doc-ai", "checks": readiness.checks, "errors": readiness.errors}
+
+@app.get("/runtime", tags=["system"])
+def runtime():
+    return {"service": "sci-doc-ai", **runtime_status()}

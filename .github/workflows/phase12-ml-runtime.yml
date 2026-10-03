@@ -1,0 +1,23 @@
+name: Phase 12 - ML Runtime Verification
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  ml-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install lightweight dependencies
+        run: pip install -r backend/requirements.txt
+      - name: Run Phase 12 tests
+        run: pytest -q tests/test_p12_ml_runtime.py
+      - name: Verify Phase 12 contract
+        run: python scripts/verify_phase12.py
+      - name: Validate ML Compose
+        run: docker compose -f docker-compose.ml.yml config

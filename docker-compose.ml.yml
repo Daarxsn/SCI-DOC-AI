@@ -1,0 +1,32 @@
+services:
+  api-ml:
+    build:
+      context: .
+      dockerfile: Dockerfile.ml
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: "false"
+      SCI_DOC_API_KEY: ${SCI_DOC_API_KEY:?SCI_DOC_API_KEY is required}
+      SCI_DOC_TENANT_ID: ${SCI_DOC_TENANT_ID:?SCI_DOC_TENANT_ID is required}
+      ML_RUNTIME_ENABLED: "true"
+      ML_PRELOAD: ${ML_PRELOAD:-false}
+      ML_DEVICE: ${ML_DEVICE:-auto}
+      MODEL_CACHE_DIR: /model-cache
+      OCR_PROVIDER: ${OCR_PROVIDER:-paddleocr}
+      TRANSLATION_PROVIDER: ${TRANSLATION_PROVIDER:-huggingface-nllb}
+      TRANSLATION_MODEL: ${TRANSLATION_MODEL:-facebook/nllb-200-distilled-600M}
+      EQUATION_PROVIDER: ${EQUATION_PROVIDER:-baseline}
+      DIAGRAM_PROVIDER: ${DIAGRAM_PROVIDER:-baseline}
+      DIAGRAM_MODEL: ${DIAGRAM_MODEL:-}
+    volumes:
+      - model_cache:/model-cache
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/runtime', timeout=5)"]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 30s
+volumes:
+  model_cache:
