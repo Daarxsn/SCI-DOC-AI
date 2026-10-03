@@ -1,0 +1,17 @@
+name: Phase 20 - First Measured Result Gate
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  phase20:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p20_real_result.py
+      - run: python -m py_compile backend/evaluation/phase20.py scripts/run_phase20.py
+      - run: test -f datasets/golden/phase17-first-case.manifest.json
