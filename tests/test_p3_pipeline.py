@@ -22,12 +22,17 @@ class FakeOcr:
 
 
 class FakeEnrichment:
-    def __init__(self, *args, **kwargs): pass
-    def apply(self, document, image_paths): return document
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def apply(self, document, image_paths):
+        return document
 
 
 class FakeTranslation:
-    def __init__(self, **kwargs): pass
+    def __init__(self, *args, **kwargs):
+        pass
+
     def translate_document(self, document, target):
         for page in document.pages:
             for element in page.elements:
