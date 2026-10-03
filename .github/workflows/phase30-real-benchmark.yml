@@ -1,0 +1,23 @@
+name: Phase 30 - Real Benchmark v1
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase30.py"
+      - "scripts/run_phase30_benchmark.py"
+      - "tests/test_p30_benchmark.py"
+      - "docs/PHASE30_REAL_BENCHMARK.md"
+      - ".github/workflows/phase30-real-benchmark.yml"
+  workflow_dispatch:
+jobs:
+  phase30:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p30_benchmark.py
+      - run: python -m py_compile backend/evaluation/phase30.py scripts/run_phase30_benchmark.py
+      - run: test -f docs/PHASE30_REAL_BENCHMARK.md
