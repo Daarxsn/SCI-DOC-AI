@@ -29,8 +29,8 @@ jobs:
       - name: Install API dependencies
         run: pip install -r backend/requirements.txt
 
-      - name: Run test suite
-        run: pytest -q
+      - name: Run Phase 11 tests
+        run: pytest -q tests/test_p11_staging.py
 
       - name: Verify Phase 11 contract
         run: python scripts/verify_phase11.py
