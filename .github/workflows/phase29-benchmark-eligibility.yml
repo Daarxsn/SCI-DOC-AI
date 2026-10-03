@@ -1,0 +1,25 @@
+name: Phase 29 - Benchmark Eligibility
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase29.py"
+      - "scripts/run_phase29_eligibility.py"
+      - "tests/test_p29_benchmark_eligibility.py"
+      - "docs/PHASE29_BENCHMARK_ELIGIBILITY.md"
+      - ".github/workflows/phase29-benchmark-eligibility.yml"
+  workflow_dispatch:
+
+jobs:
+  phase29:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p29_benchmark_eligibility.py
+      - run: python -m py_compile backend/evaluation/phase29.py scripts/run_phase29_eligibility.py
+      - run: test -f docs/PHASE29_BENCHMARK_ELIGIBILITY.md
