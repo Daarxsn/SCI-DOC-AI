@@ -1,0 +1,18 @@
+{
+  "dataset_id":"sci-doc-real-golden",
+  "version":"1.2.0",
+  "benchmark_id":"phase18-first-case",
+  "description":"First real-case execution manifest. Source/reference/annotation assets are intentionally externally supplied.",
+  "cases":[
+    {
+      "case_id":"mathematics-hi-001",
+      "domain":"mathematics",
+      "source_language":"en",
+      "target_language":"hi",
+      "split":"test",
+      "input_path":"datasets/golden/assets/mathematics-hi-001.png",
+      "reference_path":"datasets/golden/references/mathematics-hi-001.json",
+      "annotation_path":"datasets/golden/annotations/mathematics-hi-001.json"
+    }
+  ]
+}
