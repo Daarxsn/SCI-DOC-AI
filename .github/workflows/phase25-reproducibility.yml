@@ -1,0 +1,17 @@
+name: Phase 25 - Dataset Freeze & Reproducibility
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  phase25:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p25_freeze.py
+      - run: python -m py_compile backend/evaluation/phase25.py scripts/freeze_phase25_dataset.py scripts/verify_phase25_freeze.py
+      - run: test -f docs/PHASE25_DATASET_FREEZE.md
