@@ -65,7 +65,7 @@ services:
       retries: 10
 
   minio:
-    image: quay.io/minio/minio:latest
+    image: bitnamilegacy/minio:latest
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
@@ -76,7 +76,7 @@ services:
     ports:
       - "9001:9001"
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:9000/minio/health/live || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 6
