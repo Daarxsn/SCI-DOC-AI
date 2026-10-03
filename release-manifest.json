@@ -1,0 +1,58 @@
+{
+  "product": "SCI-DOC AI",
+  "version": "1.0.0",
+  "release_channel": "production-candidate",
+  "api_version": "v1",
+  "python": "3.11+",
+  "supported_input": [
+    "pdf",
+    "png",
+    "jpg",
+    "jpeg"
+  ],
+  "source_language": "en",
+  "target_languages": [
+    "hi",
+    "mr"
+  ],
+  "domains": [
+    "mathematics",
+    "physics",
+    "biology"
+  ],
+  "pipeline": [
+    "ingestion",
+    "preprocessing",
+    "ocr",
+    "layout",
+    "scientific_enrichment",
+    "translation",
+    "validation",
+    "review",
+    "reconstruction",
+    "evaluation"
+  ],
+  "security": [
+    "tenant-bound authentication",
+    "tenant-scoped results",
+    "bounded retries",
+    "artifact checksum verification",
+    "production readiness checks"
+  ],
+  "verification": {
+    "p2": true,
+    "p3": true,
+    "p4": true,
+    "p5": true,
+    "p6": true,
+    "p7": true,
+    "p8": true,
+    "p9": true
+  },
+  "limitations": [
+    "durable PostgreSQL/Redis/object storage must be supplied for production",
+    "production secrets and TLS must be configured externally",
+    "real-client quality metrics require a real pilot dataset",
+    "heavy ML providers require their production runtime/model artifacts"
+  ]
+}
