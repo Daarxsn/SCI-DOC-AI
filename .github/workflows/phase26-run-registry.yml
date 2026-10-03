@@ -1,0 +1,17 @@
+name: Phase 26 - Benchmark Run Registry
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  phase26:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p26_run_registry.py
+      - run: python -m py_compile backend/evaluation/phase26.py scripts/register_phase26_run.py scripts/verify_phase26_run.py
+      - run: test -f docs/PHASE26_RUN_REGISTRY.md
