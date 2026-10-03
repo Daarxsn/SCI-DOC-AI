@@ -1,0 +1,17 @@
+name: Phase 19 - First Benchmark Result Gate
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  phase19:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p19_benchmark_result.py
+      - run: python -m py_compile backend/evaluation/phase19.py scripts/run_phase19_benchmark.py
+      - run: test -f datasets/golden/phase17-first-case.manifest.json
