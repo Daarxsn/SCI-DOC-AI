@@ -67,7 +67,7 @@ def test_scientific_elements_get_dedicated_render_plans():
     assert [item["render_status"] for item in plan] == [
         "adapter_required",
         "ready",
-        "grid_adapter_required",
+        "ready",
     ]
 
 
