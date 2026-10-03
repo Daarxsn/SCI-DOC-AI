@@ -1,0 +1,25 @@
+name: Phase 32 - Model Optimization
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase32.py"
+      - "backend/models/optimization.py"
+      - "backend/core/model_routing.py"
+      - "scripts/run_phase32_optimization.py"
+      - "tests/test_p32_optimization.py"
+      - "docs/PHASE32_MODEL_OPTIMIZATION.md"
+      - ".github/workflows/phase32-model-optimization.yml"
+  workflow_dispatch:
+jobs:
+  phase32:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p32_optimization.py
+      - run: python -m py_compile backend/evaluation/phase32.py backend/models/optimization.py backend/core/model_routing.py scripts/run_phase32_optimization.py
+      - run: test -f docs/PHASE32_MODEL_OPTIMIZATION.md
