@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import pytest
-from backend.evaluation.phase28 import build_ground_truth_manifest
+from backend.evaluation.phase28 import build_ground_truth_manifest, sha256_file
 
 def setup_case(tmp_path: Path, verified=True):
     source = tmp_path / "source"
@@ -27,6 +27,7 @@ def setup_case(tmp_path: Path, verified=True):
         "diagrams": [], "layout": [{"type": "text", "bbox": [0, 0, 100, 50]}]
     }))
     intake = tmp_path / "intake.json"
+    case["source_sha256"] = sha256_file(source / "sample.png")
     intake.write_text(json.dumps({
         "dataset_id": "sci-doc-real-intake", "version": "1.0.0",
         "status": "INTAKE_VALIDATED", "cases": [case]
