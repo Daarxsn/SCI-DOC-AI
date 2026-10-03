@@ -14,6 +14,7 @@ from backend.translation.factory import create_translation_adapter
 from backend.translation.terminology import TerminologyRegistry
 from backend.translation.review import TranslationReviewQueue
 from backend.validation.unified import UnifiedValidationService
+from backend.reconstruction.models import ReconstructionArtifact
 from backend.reconstruction.service import ReconstructionService
 
 
@@ -23,6 +24,7 @@ class EndToEndResult:
     validation: object
     review_queue: TranslationReviewQueue
     output_path: str | None
+    reconstruction_artifact: ReconstructionArtifact | None
     model_configuration: dict
     stage_status: dict[str, str]
 
@@ -61,7 +63,9 @@ class ScientificDocumentPipeline:
             "reconstruction": "skipped",
         }
 
-        with TemporaryDirectory(prefix="sci-doc-p3-") as work_dir:
+        reconstruction_artifact = None
+
+        with TemporaryDirectory(prefix="sci-doc-p4-") as work_dir:
             page_dir = Path(work_dir) / "pages"
             artifacts = PreprocessingService().process(
                 source_path=source,
@@ -108,10 +112,11 @@ class ScientificDocumentPipeline:
             validation = UnifiedValidationService().validate(translated)
             stages["validation"] = "passed"
 
-            rendered = None
             if output_path and validation.export_allowed:
-                rendered = ReconstructionService().render_pdf(
-                    translated, output_path
+                reconstruction_artifact = ReconstructionService().export_artifact(
+                    translated,
+                    output_path,
+                    source_page_paths=image_paths,
                 )
                 stages["reconstruction"] = "passed"
 
@@ -119,7 +124,8 @@ class ScientificDocumentPipeline:
             document=translated,
             validation=validation,
             review_queue=self.review_queue,
-            output_path=str(rendered) if rendered else None,
+            output_path=str(reconstruction_artifact.path) if reconstruction_artifact else None,
+            reconstruction_artifact=reconstruction_artifact,
             model_configuration={
                 "ocr_provider": self.config.ocr_provider,
                 "translation_provider": self.config.translation_provider,
