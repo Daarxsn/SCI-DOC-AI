@@ -1,0 +1,18 @@
+{
+  "deployment_evidence": true,
+  "endpoint_smoke_evidence": true,
+  "real_document_execution": true,
+  "benchmark_evidence": true,
+  "security_evidence": true,
+  "performance_evidence": true,
+  "resilience_evidence": true,
+  "artifact_integrity_evidence": true,
+  "audit_evidence": true,
+  "customer_acceptance_evidence": true,
+  "support_handoff_evidence": true,
+  "rollback_evidence": true,
+  "deployment_id": "deployment-evidence-placeholder",
+  "release_version": "1.0.0",
+  "evidence_owner": "release-manager",
+  "customer_or_pilot_id": "pilot-placeholder"
+}
