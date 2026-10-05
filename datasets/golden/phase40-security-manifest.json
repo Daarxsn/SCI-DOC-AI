@@ -1,0 +1,19 @@
+{
+  "authentication": true,
+  "authorization_least_privilege": true,
+  "tenant_isolation": true,
+  "tls_in_transit": true,
+  "encryption_at_rest": true,
+  "secret_management": true,
+  "upload_validation": true,
+  "rate_limiting": true,
+  "audit_logging": true,
+  "sensitive_data_redaction": true,
+  "retention_policy": true,
+  "dependency_security_scanning": true,
+  "supply_chain_integrity": true,
+  "incident_response": true,
+  "security_testing": true,
+  "max_upload_size_mb": 50,
+  "retention_days": 30
+}
