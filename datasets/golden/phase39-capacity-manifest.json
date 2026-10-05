@@ -1,0 +1,13 @@
+{
+  "load_test_plan": true,
+  "latency_slo": true,
+  "throughput_slo": true,
+  "concurrency_limit": true,
+  "queue_capacity": true,
+  "resource_headroom": true,
+  "performance_observability": true,
+  "target_concurrency": 20,
+  "target_requests_per_second": 5,
+  "p95_latency_ms": 500,
+  "max_error_rate_percent": 2
+}
