@@ -1,0 +1,27 @@
+name: Phase 46 - Production Evidence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase46.py"
+      - "scripts/check_phase46_production_evidence.py"
+      - "tests/test_p46_production_evidence.py"
+      - "datasets/golden/phase46-production-evidence-manifest.json"
+      - "docs/PHASE46_PRODUCTION_EVIDENCE.md"
+      - ".github/workflows/phase46-production-evidence.yml"
+  workflow_dispatch:
+
+jobs:
+  phase46:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p46_production_evidence.py
+      - run: python -m py_compile backend/evaluation/phase46.py scripts/check_phase46_production_evidence.py
+      - run: python scripts/check_phase46_production_evidence.py --manifest datasets/golden/phase46-production-evidence-manifest.json --output phase46-production-evidence-readiness.json
+      - run: test -f docs/PHASE46_PRODUCTION_EVIDENCE.md
