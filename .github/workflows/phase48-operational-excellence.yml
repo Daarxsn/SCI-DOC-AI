@@ -1,0 +1,27 @@
+name: Phase 48 - Operational Excellence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase48.py"
+      - "scripts/check_phase48_operational_excellence.py"
+      - "tests/test_p48_operational_excellence.py"
+      - "datasets/golden/phase48-operational-excellence-manifest.json"
+      - "docs/PHASE48_OPERATIONAL_EXCELLENCE.md"
+      - ".github/workflows/phase48-operational-excellence.yml"
+  workflow_dispatch:
+
+jobs:
+  phase48:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p48_operational_excellence.py
+      - run: python -m py_compile backend/evaluation/phase48.py scripts/check_phase48_operational_excellence.py
+      - run: python scripts/check_phase48_operational_excellence.py --manifest datasets/golden/phase48-operational-excellence-manifest.json --output phase48-operational-excellence-readiness.json
+      - run: test -f docs/PHASE48_OPERATIONAL_EXCELLENCE.md
