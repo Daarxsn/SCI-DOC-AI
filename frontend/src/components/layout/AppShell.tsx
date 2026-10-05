@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { Badge } from "../ui";
 
 const navigation = [
   { label: "Dashboard", to: "/dashboard" },
@@ -11,7 +12,7 @@ export function AppShell() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          <span className="brand-mark">S</span>
+          <span className="brand-mark" aria-hidden="true">S</span>
           <div>
             <strong>SCI-DOC AI</strong>
             <span>Scientific Intelligence</span>
@@ -32,7 +33,7 @@ export function AppShell() {
       <main className="main-content">
         <header className="topbar">
           <span>Document Intelligence Platform</span>
-          <span className="status-dot">Foundation</span>
+          <Badge tone="success">Foundation</Badge>
         </header>
         <section className="page-content">
           <Outlet />
