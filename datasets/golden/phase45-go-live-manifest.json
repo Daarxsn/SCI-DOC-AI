@@ -1,0 +1,22 @@
+{
+  "release_candidate_approved": true,
+  "security_gate_passed": true,
+  "capacity_gate_passed": true,
+  "resilience_gate_passed": true,
+  "deployment_contract_passed": true,
+  "observability_gate_passed": true,
+  "smoke_test_plan": true,
+  "rollback_plan": true,
+  "backup_restore_plan": true,
+  "incident_response_plan": true,
+  "on_call_ownership": true,
+  "support_escalation_path": true,
+  "data_retention_policy": true,
+  "change_management_record": true,
+  "go_live_approval": true,
+  "release_version": "1.0.0",
+  "deployment_environment": "production",
+  "release_commit": "example-release-commit",
+  "approved_by": "release-manager",
+  "go_live_window": "2026-10-05T18:00:00+05:30"
+}
