@@ -1,0 +1,27 @@
+name: Phase 45 - Production Go-Live
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase45.py"
+      - "scripts/check_phase45_go_live.py"
+      - "tests/test_p45_go_live.py"
+      - "datasets/golden/phase45-go-live-manifest.json"
+      - "docs/PHASE45_GO_LIVE_GOVERNANCE.md"
+      - ".github/workflows/phase45-go-live.yml"
+  workflow_dispatch:
+
+jobs:
+  phase45:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p45_go_live.py
+      - run: python -m py_compile backend/evaluation/phase45.py scripts/check_phase45_go_live.py
+      - run: python scripts/check_phase45_go_live.py --manifest datasets/golden/phase45-go-live-manifest.json --output phase45-go-live-readiness.json
+      - run: test -f docs/PHASE45_GO_LIVE_GOVERNANCE.md
