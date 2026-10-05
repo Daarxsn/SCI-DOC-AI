@@ -1,0 +1,23 @@
+name: Phase 38 - Resilience
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase38.py"
+      - "scripts/check_phase38_resilience.py"
+      - "tests/test_p38_resilience.py"
+      - "docs/PHASE38_RESILIENCE.md"
+      - ".github/workflows/phase38-resilience.yml"
+  workflow_dispatch:
+jobs:
+  phase38:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p38_resilience.py
+      - run: python -m py_compile backend/evaluation/phase38.py scripts/check_phase38_resilience.py
+      - run: test -f docs/PHASE38_RESILIENCE.md
