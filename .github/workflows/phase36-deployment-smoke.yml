@@ -1,0 +1,23 @@
+name: Phase 36 - Deployment Smoke Test
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase36.py"
+      - "scripts/run_phase36_smoke_test.py"
+      - "tests/test_p36_smoke_test.py"
+      - "docs/PHASE36_DEPLOYMENT_SMOKE_TEST.md"
+      - ".github/workflows/phase36-deployment-smoke.yml"
+  workflow_dispatch:
+jobs:
+  phase36:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p36_smoke_test.py
+      - run: python -m py_compile backend/evaluation/phase36.py scripts/run_phase36_smoke_test.py
+      - run: test -f docs/PHASE36_DEPLOYMENT_SMOKE_TEST.md
