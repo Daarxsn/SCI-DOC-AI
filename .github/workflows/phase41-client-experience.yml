@@ -1,0 +1,27 @@
+name: Phase 41 - Client Experience / Operations
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase41.py"
+      - "scripts/check_phase41_client_experience.py"
+      - "tests/test_p41_client_experience.py"
+      - "datasets/golden/phase41-client-experience-manifest.json"
+      - "docs/PHASE41_CLIENT_EXPERIENCE.md"
+      - ".github/workflows/phase41-client-experience.yml"
+  workflow_dispatch:
+
+jobs:
+  phase41:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p41_client_experience.py
+      - run: python -m py_compile backend/evaluation/phase41.py scripts/check_phase41_client_experience.py
+      - run: python scripts/check_phase41_client_experience.py --manifest datasets/golden/phase41-client-experience-manifest.json --output phase41-client-experience-readiness.json
+      - run: test -f docs/PHASE41_CLIENT_EXPERIENCE.md
