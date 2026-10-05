@@ -1,0 +1,14 @@
+{
+  "postmortem_process": true,
+  "corrective_action_tracking": true,
+  "change_failure_review": true,
+  "customer_feedback_review": true,
+  "runbook_review": true,
+  "risk_register_review": true,
+  "cost_efficiency_review": true,
+  "improvement_backlog": true,
+  "improvement_owner": "platform-owner",
+  "improvement_cadence": "monthly",
+  "postmortem_sla": "five-business-days",
+  "decision_record_location": "docs/decisions"
+}
