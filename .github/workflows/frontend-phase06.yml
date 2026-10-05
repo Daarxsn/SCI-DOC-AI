@@ -1,0 +1,28 @@
+name: Frontend Phase 06 - Results Workspace
+
+on:
+  push:
+    paths:
+      - "frontend/**"
+      - "docs/FRONTEND_PHASE06_RESULTS_WORKSPACE.md"
+      - ".github/workflows/frontend-phase06.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - "docs/FRONTEND_PHASE06_RESULTS_WORKSPACE.md"
+      - ".github/workflows/frontend-phase06.yml"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package.json
+      - run: npm install
+      - run: npm run build
