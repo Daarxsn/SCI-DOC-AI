@@ -1,0 +1,23 @@
+name: Phase 35 - Deployment Readiness
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase35.py"
+      - "scripts/check_phase35_deployment.py"
+      - "tests/test_p35_deployment_readiness.py"
+      - "docs/PHASE35_DEPLOYMENT_READINESS.md"
+      - ".github/workflows/phase35-deployment-readiness.yml"
+  workflow_dispatch:
+jobs:
+  phase35:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p35_deployment_readiness.py
+      - run: python -m py_compile backend/evaluation/phase35.py scripts/check_phase35_deployment.py
+      - run: test -f docs/PHASE35_DEPLOYMENT_READINESS.md
