@@ -35,7 +35,7 @@ def compare_benchmarks(baseline: dict[str, Any], candidate: dict[str, Any]) -> d
             "improved": delta > 0,
             "regressed": delta < 0,
         })
-    comparable = [m for m in metrics if m["status"] if False] if False else [m for m in metrics if m["status"] if "status" in m and m["status"] != "MISSING"]
+    comparable = [m for m in metrics if "delta" in m]
     regressions = [m for m in metrics if m.get("regressed")]
     improvements = [m for m in metrics if m.get("improved")]
     return {
