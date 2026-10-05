@@ -1,0 +1,27 @@
+name: Phase 39 - Capacity / Performance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase39.py"
+      - "scripts/check_phase39_capacity.py"
+      - "tests/test_p39_capacity.py"
+      - "datasets/golden/phase39-capacity-manifest.json"
+      - "docs/PHASE39_CAPACITY_PERFORMANCE.md"
+      - ".github/workflows/phase39-capacity-performance.yml"
+  workflow_dispatch:
+
+jobs:
+  phase39:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p39_capacity.py
+      - run: python -m py_compile backend/evaluation/phase39.py scripts/check_phase39_capacity.py
+      - run: python scripts/check_phase39_capacity.py --manifest datasets/golden/phase39-capacity-manifest.json --output phase39-capacity-readiness.json
+      - run: test -f docs/PHASE39_CAPACITY_PERFORMANCE.md
