@@ -1,0 +1,27 @@
+name: Phase 42 - Cloud Deployment Contract
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase42.py"
+      - "scripts/check_phase42_deployment.py"
+      - "tests/test_p42_deployment.py"
+      - "datasets/golden/phase42-deployment-manifest.json"
+      - "docs/PHASE42_CLOUD_DEPLOYMENT.md"
+      - ".github/workflows/phase42-cloud-deployment.yml"
+  workflow_dispatch:
+
+jobs:
+  phase42:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p42_deployment.py
+      - run: python -m py_compile backend/evaluation/phase42.py scripts/check_phase42_deployment.py
+      - run: python scripts/check_phase42_deployment.py --manifest datasets/golden/phase42-deployment-manifest.json --output phase42-deployment-readiness.json
+      - run: test -f docs/PHASE42_CLOUD_DEPLOYMENT.md
