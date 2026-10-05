@@ -1,0 +1,24 @@
+name: Phase 37 - Observability
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/monitoring/observability.py"
+      - "backend/evaluation/phase37.py"
+      - "scripts/check_phase37_observability.py"
+      - "tests/test_p37_observability.py"
+      - "docs/PHASE37_OBSERVABILITY.md"
+      - ".github/workflows/phase37-observability.yml"
+  workflow_dispatch:
+jobs:
+  phase37:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p37_observability.py
+      - run: python -m py_compile backend/monitoring/observability.py backend/evaluation/phase37.py scripts/check_phase37_observability.py
+      - run: test -f docs/PHASE37_OBSERVABILITY.md
