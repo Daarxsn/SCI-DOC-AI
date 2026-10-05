@@ -1,0 +1,20 @@
+{
+  "container_image_pinned": true,
+  "environment_configuration": true,
+  "secret_injection": true,
+  "tls_termination": true,
+  "health_check": true,
+  "readiness_check": true,
+  "persistent_storage": true,
+  "queue_worker_topology": true,
+  "network_boundary": true,
+  "observability_export": true,
+  "backup_policy": true,
+  "rollback_strategy": true,
+  "migration_strategy": true,
+  "artifact_registry": true,
+  "deployment_approval": true,
+  "environment": "staging",
+  "image_reference": "registry.example/sci-doc-ai@sha256:example",
+  "rollback_version": "1.0.0"
+}
