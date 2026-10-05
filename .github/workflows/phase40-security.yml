@@ -1,0 +1,27 @@
+name: Phase 40 - Security / Compliance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase40.py"
+      - "scripts/check_phase40_security.py"
+      - "tests/test_p40_security.py"
+      - "datasets/golden/phase40-security-manifest.json"
+      - "docs/PHASE40_SECURITY_COMPLIANCE.md"
+      - ".github/workflows/phase40-security.yml"
+  workflow_dispatch:
+
+jobs:
+  phase40:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p40_security.py
+      - run: python -m py_compile backend/evaluation/phase40.py scripts/check_phase40_security.py
+      - run: python scripts/check_phase40_security.py --manifest datasets/golden/phase40-security-manifest.json --output phase40-security-readiness.json
+      - run: test -f docs/PHASE40_SECURITY_COMPLIANCE.md
