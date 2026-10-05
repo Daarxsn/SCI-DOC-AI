@@ -1,0 +1,27 @@
+name: Phase 47 - Continuous Operations
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase47.py"
+      - "scripts/check_phase47_operations.py"
+      - "tests/test_p47_operations.py"
+      - "datasets/golden/phase47-operations-manifest.json"
+      - "docs/PHASE47_CONTINUOUS_OPERATIONS.md"
+      - ".github/workflows/phase47-operations.yml"
+  workflow_dispatch:
+
+jobs:
+  phase47:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p47_operations.py
+      - run: python -m py_compile backend/evaluation/phase47.py scripts/check_phase47_operations.py
+      - run: python scripts/check_phase47_operations.py --manifest datasets/golden/phase47-operations-manifest.json --output phase47-operations-readiness.json
+      - run: test -f docs/PHASE47_CONTINUOUS_OPERATIONS.md
