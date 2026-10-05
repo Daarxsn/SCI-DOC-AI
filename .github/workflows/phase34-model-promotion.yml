@@ -1,0 +1,24 @@
+name: Phase 34 - Model Promotion
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/evaluation/phase34.py"
+      - "scripts/promote_phase34_candidate.py"
+      - "scripts/verify_phase34_promotion.py"
+      - "tests/test_p34_promotion.py"
+      - "docs/PHASE34_MODEL_PROMOTION.md"
+      - ".github/workflows/phase34-model-promotion.yml"
+  workflow_dispatch:
+jobs:
+  phase34:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: pytest -q tests/test_p34_promotion.py
+      - run: python -m py_compile backend/evaluation/phase34.py scripts/promote_phase34_candidate.py scripts/verify_phase34_promotion.py
+      - run: test -f docs/PHASE34_MODEL_PROMOTION.md
