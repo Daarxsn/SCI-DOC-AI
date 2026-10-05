@@ -1,0 +1,21 @@
+{
+  "slo_ownership": true,
+  "alerting_rules": true,
+  "incident_management": true,
+  "on_call_schedule": true,
+  "vulnerability_remediation": true,
+  "dependency_update_process": true,
+  "backup_verification": true,
+  "restore_drill_schedule": true,
+  "access_review_schedule": true,
+  "audit_review_schedule": true,
+  "model_version_review": true,
+  "benchmark_regression_review": true,
+  "capacity_review": true,
+  "security_review": true,
+  "evidence_retention": true,
+  "service_owner": "platform-owner",
+  "incident_channel": "ops-oncall",
+  "review_cadence": "monthly",
+  "escalation_policy": "sev1-sev4"
+}
