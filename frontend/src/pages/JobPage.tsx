@@ -1,20 +1,45 @@
 import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Badge, Button, Card, TextField } from "../components/ui";
 import { ApiError, api, type JobStatusResponse } from "../services/api";
 
 const TERMINAL = new Set(["completed", "failed"]);
+const JOB_DOCUMENT_KEY = "sci-doc-ai.job-document.";
 
 export function JobPage() {
+  const { jobId: routeJobId } = useParams();
   const [documentId, setDocumentId] = useState("");
   const [targetLanguage, setTargetLanguage] = useState("Hindi");
   const [domain, setDomain] = useState("general");
-  const [jobId, setJobId] = useState("");
+  const [jobId, setJobId] = useState(routeJobId ?? "");
   const [job, setJob] = useState<JobStatusResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [loadingJob, setLoadingJob] = useState(Boolean(routeJobId));
+
+  const loadJob = async (id: string) => {
+    setLoadingJob(true);
+    setError(null);
+    try {
+      const latest = await api.getJob(id);
+      setJobId(id);
+      setJob(latest);
+      const storedDocumentId = window.localStorage.getItem(JOB_DOCUMENT_KEY + id);
+      if (storedDocumentId) setDocumentId(storedDocumentId);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Unable to load the job.");
+    } finally {
+      setLoadingJob(false);
+    }
+  };
+
+  useEffect(() => {
+    if (routeJobId) void loadJob(routeJobId);
+  }, [routeJobId]);
 
   const createJob = async () => {
-    if (!documentId.trim()) {
+    const normalizedDocumentId = documentId.trim();
+    if (!normalizedDocumentId) {
       setError("Document ID is required by the current backend contract.");
       return;
     }
@@ -22,11 +47,12 @@ export function JobPage() {
     setError(null);
     try {
       const created = await api.createJob({
-        document_id: documentId.trim(),
+        document_id: normalizedDocumentId,
         target_language: targetLanguage.trim(),
         domain: domain.trim(),
         idempotency_key: crypto.randomUUID(),
       });
+      window.localStorage.setItem(JOB_DOCUMENT_KEY + created.job_id, normalizedDocumentId);
       setJobId(created.job_id);
       setJob(created);
     } catch (err) {
@@ -61,6 +87,7 @@ export function JobPage() {
           The document ID must come from a valid backend document lifecycle.
         </p>
       </header>
+
       <Card className="job-form">
         <div className="form-grid">
           <TextField label="Document ID" placeholder="Backend document ID" value={documentId}
@@ -74,6 +101,7 @@ export function JobPage() {
           <Button size="lg" onClick={() => void createJob()} disabled={creating}>
             {creating ? "Creating…" : "Create processing job"}
           </Button>
+          {jobId ? <Link className="button button--secondary button--lg" to={`/jobs/${jobId}`}>Open job route</Link> : null}
         </div>
         {error ? (
           <div className="status-panel status-panel--error" role="alert">
@@ -81,12 +109,14 @@ export function JobPage() {
           </div>
         ) : null}
       </Card>
-      {job ? <JobStatus job={job} /> : null}
+
+      {loadingJob ? <Card className="job-status"><span className="loading-state">Loading job…</span></Card> : null}
+      {job ? <JobStatus job={job} documentId={documentId} /> : null}
     </div>
   );
 }
 
-function JobStatus({ job }: { job: JobStatusResponse }) {
+function JobStatus({ job, documentId }: { job: JobStatusResponse; documentId: string }) {
   const tone = job.status === "completed" ? "success" : job.status === "failed" ? "danger" : "info";
   return (
     <section className="job-status">
@@ -100,7 +130,11 @@ function JobStatus({ job }: { job: JobStatusResponse }) {
           <div className="progress-fill" style={{ width: `${job.progress}%` }} />
         </div>
         {job.error ? <p className="job-error">{job.error}</p> : null}
-        {!TERMINAL.has(job.status) ? <p className="result-note">Refreshing every 2 seconds while the job is active.</p> : null}
+        <div className="job-actions">
+          {documentId ? <Link className="button button--secondary" to={`/documents/${encodeURIComponent(documentId)}`}>Open document results</Link> : null}
+          {!TERMINAL.has(job.status) ? <p className="result-note">Refreshing every 2 seconds while the job is active.</p> : null}
+        </div>
+        <p className="result-note">The job API does not currently return document_id, so this UI retains the document ID locally when the job is created.</p>
       </Card>
     </section>
   );
