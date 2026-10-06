@@ -1,5 +1,6 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from uuid import uuid4
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
@@ -39,6 +40,7 @@ async def upload_document(file: UploadFile = File(...)) -> dict:
 
     return {
         "status": "accepted",
+        "document_id": str(uuid4()),
         "filename": file.filename,
         "mime_type": file.content_type,
         "size_bytes": len(content),
