@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { Badge, Button, Card } from "../components/ui";
 import { ApiError, api, type UploadResponse } from "../services/api";
 
@@ -175,10 +176,13 @@ function UploadResult({ result }: { result: UploadResponse }) {
         </Card>
       ) : null}
 
-      <p className="result-note">
-        The current upload contract does not return a document ID. Job creation and
-        document workspace lifecycle will be connected when the backend exposes that identifier.
-      </p>
+      <div className="upload-next-step">
+        <div><strong>Document ID</strong><span>{result.document_id}</span></div>
+        <div className="page-actions">
+          <Link className="button button--secondary" to={`/jobs?documentId=${encodeURIComponent(result.document_id)}`}>Create processing job</Link>
+          <Link className="button button--secondary" to={`/documents/${encodeURIComponent(result.document_id)}`}>Open results</Link>
+        </div>
+      </div>
     </section>
   );
 }
