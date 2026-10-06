@@ -1,0 +1,29 @@
+name: Frontend Phase 13 - Runtime Readiness
+
+on:
+  push:
+    paths:
+      - "frontend/**"
+      - "docs/FRONTEND_PHASE13_RUNTIME_READINESS.md"
+      - ".github/workflows/frontend-phase13.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - "docs/FRONTEND_PHASE13_RUNTIME_READINESS.md"
+      - ".github/workflows/frontend-phase13.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package.json
+      - run: npm install
+      - run: npm run verify:release
