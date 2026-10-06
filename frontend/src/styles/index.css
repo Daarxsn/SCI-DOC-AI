@@ -66,3 +66,8 @@ h1 { margin: 0; font-size: var(--text-display); line-height: 1.05; letter-spacin
 .model-card > span { color:var(--color-text-muted); font-size:var(--text-sm); overflow-wrap:anywhere; }
 .model-card__checks { display:flex; flex-wrap:wrap; gap:var(--space-3); color:var(--color-text-subtle); font-size:var(--text-xs); }
 @media (max-width:700px) { .model-grid { grid-template-columns:1fr; } }
+
+.upload-next-step { display:flex; align-items:center; justify-content:space-between; gap:var(--space-5); margin-top:var(--space-6); padding:var(--space-4); border:1px solid var(--color-border); border-radius:var(--radius-md); background:var(--color-surface-subtle); }
+.upload-next-step > div:first-child { min-width:0; display:grid; gap:4px; }
+.upload-next-step span { color:var(--color-text-muted); font:var(--text-xs)/1.5 var(--font-mono); overflow-wrap:anywhere; }
+@media (max-width:700px) { .upload-next-step { align-items:flex-start; flex-direction:column; } }
