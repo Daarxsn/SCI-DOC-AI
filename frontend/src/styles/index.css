@@ -59,3 +59,10 @@ h1 { margin: 0; font-size: var(--text-display); line-height: 1.05; letter-spacin
 .runtime-grid span { color:var(--color-text-muted); font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; }
 .runtime-grid strong,.config-list strong { overflow-wrap:anywhere; font-size:var(--text-sm); }
 @media (max-width:700px) { .runtime-grid,.config-list { grid-template-columns:1fr; } }
+
+.model-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--space-3); margin-top:var(--space-5); }
+.model-card { display:grid; gap:var(--space-2); padding:var(--space-4); border:1px solid var(--color-border); border-radius:var(--radius-md); background:var(--color-surface-subtle); }
+.model-card__header { display:flex; align-items:center; justify-content:space-between; gap:var(--space-3); }
+.model-card > span { color:var(--color-text-muted); font-size:var(--text-sm); overflow-wrap:anywhere; }
+.model-card__checks { display:flex; flex-wrap:wrap; gap:var(--space-3); color:var(--color-text-subtle); font-size:var(--text-xs); }
+@media (max-width:700px) { .model-grid { grid-template-columns:1fr; } }
