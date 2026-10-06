@@ -6,3 +6,6 @@ services:
     environment:
       APP_NAME: SCI-DOC AI
       DEBUG: "false"
+      SCI_DOC_API_KEY: ${SCI_DOC_API_KEY}
+      SCI_DOC_TENANT_ID: ${SCI_DOC_TENANT_ID}
+      SCI_DOC_CORS_ORIGINS: ${SCI_DOC_CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
