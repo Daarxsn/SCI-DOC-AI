@@ -1,0 +1,31 @@
+name: Frontend Phase 14 - Document Job Handoff
+
+on:
+  push:
+    paths:
+      - "frontend/**"
+      - "backend/api/upload.py"
+      - "docs/FRONTEND_PHASE14_DOCUMENT_JOB_HANDOFF.md"
+      - ".github/workflows/frontend-phase14.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - "backend/api/upload.py"
+      - "docs/FRONTEND_PHASE14_DOCUMENT_JOB_HANDOFF.md"
+      - ".github/workflows/frontend-phase14.yml"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package.json
+      - run: npm install
+      - run: npm run verify:release
