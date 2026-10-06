@@ -1,0 +1,29 @@
+name: Frontend Phase 08 - Artifact Review
+
+on:
+  push:
+    paths:
+      - "frontend/**"
+      - "docs/FRONTEND_PHASE08_ARTIFACT_REVIEW.md"
+      - ".github/workflows/frontend-phase08.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - "docs/FRONTEND_PHASE08_ARTIFACT_REVIEW.md"
+      - ".github/workflows/frontend-phase08.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package.json
+      - run: npm install
+      - run: npm run build
