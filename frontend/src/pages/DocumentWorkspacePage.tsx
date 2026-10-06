@@ -114,12 +114,33 @@ function ArtifactItem({ artifact, index }: { artifact: ResultArtifact; index: nu
   return (
     <details className="artifact-item" open={index === 1}>
       <summary>
-        <strong>Artifact {index}</strong>
-        <Badge tone="neutral">{Object.keys(artifact).length} fields</Badge>
+        <span className="artifact-title"><strong>Artifact {index}</strong><span>{artifact.format}</span></span>
+        <Badge tone="neutral">{formatBytes(artifact.size_bytes)}</Badge>
       </summary>
-      <pre>{JSON.stringify(artifact, null, 2)}</pre>
+      <div className="artifact-details">
+        <div className="artifact-meta">
+          <div><span>Artifact ID</span><strong>{artifact.artifact_id}</strong></div>
+          <div><span>Format</span><strong>{artifact.format}</strong></div>
+          <div><span>Size</span><strong>{formatBytes(artifact.size_bytes)}</strong></div>
+          <div><span>Checksum</span><strong className="artifact-break">{artifact.checksum ?? "Not supplied"}</strong></div>
+          <div><span>Path</span><strong className="artifact-break">{artifact.path}</strong></div>
+        </div>
+        <div className="artifact-integrity"><Badge tone={artifact.checksum ? "success" : "neutral"}>{artifact.checksum ? "Checksum supplied" : "No checksum"}</Badge><span>Metadata is read-only; no artifact contents are altered by this view.</span></div>
+      </div>
     </details>
   );
+}
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ["KB", "MB", "GB"];
+  let value = bytes / 1024;
+  let unit = units[0];
+  for (let index = 1; value >= 1024 && index < units.length; index += 1) {
+    value /= 1024;
+    unit = units[index];
+  }
+  return `${value.toFixed(value >= 10 ? 0 : 1)} ${unit}`;
 }
 
 function EmptyWorkspace({ message }: { message: string }) {
