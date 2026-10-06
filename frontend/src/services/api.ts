@@ -29,6 +29,7 @@ export type UploadPage = {
 
 export type UploadResponse = {
   status: string;
+  document_id: string;
   filename: string;
   mime_type?: string | null;
   size_bytes: number;
