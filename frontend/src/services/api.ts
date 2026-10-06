@@ -105,9 +105,12 @@ export async function apiFetch<T>(
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(new URL(path, apiConfig.baseUrl), {
+  const response = await fetch(new URL(path, `${apiConfig.baseUrl}/`), {
     ...init,
     headers,
+    cache: "no-store",
+    credentials: "omit",
+    referrerPolicy: "no-referrer",
   });
 
   if (!response.ok) {
