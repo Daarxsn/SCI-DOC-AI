@@ -8,13 +8,16 @@ export function DocumentWorkspacePage() {
   const [result, setResult] = useState<ResultResponse | null>(null);
   const [loading, setLoading] = useState(Boolean(documentId));
   const [error, setError] = useState<string | null>(null);
+  const [validationWarnings, setValidationWarnings] = useState<string[]>([]);
 
   const loadResults = async () => {
     if (!documentId) return;
     setLoading(true);
     setError(null);
     try {
-      setResult(await api.getResults(documentId));
+      const response = await api.getResults(documentId);
+      setResult(response);
+      setValidationWarnings(validateResult(response));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Unable to load document results.");
     } finally {
@@ -61,7 +64,7 @@ export function DocumentWorkspacePage() {
       {loading ? (
         <Card><span className="loading-state">Loading document results…</span></Card>
       ) : result ? (
-        <ResultsView result={result} />
+        <ResultsView result={result} validationWarnings={validationWarnings} />
       ) : !error ? (
         <EmptyWorkspace message="No result payload is available." />
       ) : null}
@@ -69,7 +72,7 @@ export function DocumentWorkspacePage() {
   );
 }
 
-function ResultsView({ result }: { result: ResultResponse }) {
+function ResultsView({ result, validationWarnings }: { result: ResultResponse; validationWarnings: string[] }) {
   const [query, setQuery] = useState("");
   const [format, setFormat] = useState("all");
   const [sort, setSort] = useState<"newest" | "largest" | "format">("newest");
@@ -97,6 +100,8 @@ function ResultsView({ result }: { result: ResultResponse }) {
         <Card><div className="system-card__label">Result status</div><div className="system-card__value">{result.status}</div></Card>
         <Card><div className="system-card__label">Artifacts</div><div className="system-card__value">{result.artifacts.length}</div></Card>
       </div>
+
+      {validationWarnings.length ? <Card className="validation-panel" role="status"><div className="section-heading"><strong>Review warnings</strong><Badge tone="warning">{validationWarnings.length}</Badge></div><ul>{validationWarnings.map((warning) => <li key={warning}>{warning}</li>)}</ul></Card> : <Card className="validation-panel validation-panel--ok"><div className="section-heading"><strong>Artifact metadata validated</strong><Badge tone="success">Pass</Badge></div><span>Document and artifact identifiers, formats, paths, sizes, and optional checksums are structurally consistent.</span></Card>}
 
       <Card className="artifact-card">
         <div className="section-heading">
@@ -175,4 +180,20 @@ function EmptyWorkspace({ message }: { message: string }) {
       <span>{message}</span>
     </Card>
   );
+}
+
+
+function validateResult(result: ResultResponse): string[] {
+  const warnings: string[] = [];
+  if (!result.document_id.trim()) warnings.push("Result document_id is empty.");
+  result.artifacts.forEach((artifact, index) => {
+    const label = `Artifact ${index + 1}`;
+    if (!artifact.artifact_id.trim()) warnings.push(`${label} has no artifact_id.`);
+    if (artifact.document_id !== result.document_id) warnings.push(`${label} document_id does not match the result document.`);
+    if (!artifact.format.trim()) warnings.push(`${label} has no format.`);
+    if (!artifact.path.trim()) warnings.push(`${label} has no path.`);
+    if (!Number.isFinite(artifact.size_bytes) || artifact.size_bytes < 0) warnings.push(`${label} has an invalid size.`);
+    if (artifact.checksum != null && !artifact.checksum.trim()) warnings.push(`${label} contains an empty checksum.`);
+  });
+  return warnings;
 }
