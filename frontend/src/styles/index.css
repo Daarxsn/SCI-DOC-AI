@@ -41,3 +41,9 @@ h1 { margin: 0; font-size: var(--text-display); line-height: 1.05; letter-spacin
 .artifact-break { overflow-wrap:anywhere; }
 .artifact-integrity { display:flex; align-items:center; flex-wrap:wrap; gap:var(--space-3); margin-top:var(--space-4); color:var(--color-text-muted); font-size:var(--text-sm); }
 @media (max-width:700px) { .artifact-meta { grid-template-columns:1fr; } }
+
+.artifact-toolbar { display:grid; grid-template-columns:minmax(220px,1fr) 180px 180px; gap:var(--space-3); margin-top:var(--space-5); padding:var(--space-4); border:1px solid var(--color-border); border-radius:var(--radius-md); background:var(--color-surface-subtle); }
+.artifact-toolbar label { display:grid; gap:6px; color:var(--color-text-muted); font-size:var(--text-xs); font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+.artifact-toolbar input,.artifact-toolbar select { width:100%; min-height:40px; border:1px solid var(--color-border-strong); border-radius:var(--radius-md); background:var(--color-surface); color:var(--color-text); padding:0 10px; outline:none; }
+.artifact-toolbar input:focus,.artifact-toolbar select:focus { box-shadow:var(--focus-ring); border-color:var(--color-primary); }
+@media (max-width:800px) { .artifact-toolbar { grid-template-columns:1fr; } }
