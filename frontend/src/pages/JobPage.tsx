@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Badge, Button, Card, TextField } from "../components/ui";
 import { ApiError, api, type JobStatusResponse } from "../services/api";
 
@@ -8,7 +8,8 @@ const JOB_DOCUMENT_KEY = "sci-doc-ai.job-document.";
 
 export function JobPage() {
   const { jobId: routeJobId } = useParams();
-  const [documentId, setDocumentId] = useState("");
+  const [searchParams] = useSearchParams();
+  const [documentId, setDocumentId] = useState(searchParams.get("documentId") ?? "");
   const [targetLanguage, setTargetLanguage] = useState("Hindi");
   const [domain, setDomain] = useState("general");
   const [jobId, setJobId] = useState(routeJobId ?? "");
@@ -84,7 +85,7 @@ export function JobPage() {
         <h1>Job control</h1>
         <p className="lead">
           Create and monitor a document-processing job using the existing protected job API.
-          The document ID must come from a valid backend document lifecycle.
+          Uploaded documents can now hand their backend-issued document ID directly into this workflow.
         </p>
       </header>
 
