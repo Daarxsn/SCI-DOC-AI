@@ -11,6 +11,7 @@ const navigation = [
 export function AppShell() {
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <aside className="sidebar">
         <div className="brand">
           <span className="brand-mark" aria-hidden="true">S</span>
@@ -24,7 +25,7 @@ export function AppShell() {
           ))}
         </nav>
       </aside>
-      <main className="main-content">
+      <main id="main-content" className="main-content" tabIndex={-1}>
         <header className="topbar"><span>Document Intelligence Platform</span><Badge tone="success">Foundation</Badge></header>
         <section className="page-content"><Outlet /></section>
       </main>
