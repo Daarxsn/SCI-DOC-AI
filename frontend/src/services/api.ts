@@ -44,7 +44,13 @@ export type JobStatusResponse = {
 };
 
 export type ResultArtifact = {
-  [key: string]: unknown;
+  tenant_id: string;
+  document_id: string;
+  artifact_id: string;
+  format: string;
+  path: string;
+  size_bytes: number;
+  checksum?: string | null;
 };
 
 export type ResultResponse = {
