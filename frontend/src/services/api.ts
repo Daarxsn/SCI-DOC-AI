@@ -70,9 +70,21 @@ export class ApiError extends Error {
 }
 
 export const apiConfig: ApiConfig = {
-  baseUrl: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000",
+  baseUrl: normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000"),
   apiKey: import.meta.env.VITE_API_KEY || undefined,
 };
+
+function normalizeBaseUrl(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) throw new Error("VITE_API_BASE_URL must not be empty.");
+  try {
+    const url = new URL(trimmed);
+    if (!["http:", "https:"].includes(url.protocol)) throw new Error("Unsupported API URL protocol.");
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    throw new Error("VITE_API_BASE_URL must be a valid HTTP(S) URL.");
+  }
+}
 
 async function parseError(response: Response): Promise<string> {
   try {
