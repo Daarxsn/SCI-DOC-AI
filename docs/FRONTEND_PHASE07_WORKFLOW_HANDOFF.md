@@ -24,3 +24,7 @@ The current job responses do not contain `document_id`. F07 therefore stores the
 
 ## Evidence boundary
 Passing F07 proves frontend workflow/navigation integration. It does not prove backend processing completion, OCR/translation quality, or scientific reconstruction correctness.
+
+
+## Re-commit record
+Phase 7 was re-committed on `main` to consolidate the workflow-handoff implementation and provide a fresh CI trigger. Lock status remains dependent on a verified successful Phase 7 CI run.
