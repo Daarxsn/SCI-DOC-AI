@@ -70,64 +70,60 @@ export function DocumentWorkspacePage() {
 }
 
 function ResultsView({ result }: { result: ResultResponse }) {
+  const [query, setQuery] = useState("");
+  const [format, setFormat] = useState("all");
+  const [sort, setSort] = useState<"newest" | "largest" | "format">("newest");
+
+  const formats = Array.from(new Set(result.artifacts.map((artifact) => artifact.format))).sort();
+  const filtered = result.artifacts
+    .filter((artifact) => format === "all" || artifact.format === format)
+    .filter((artifact) => {
+      const needle = query.trim().toLowerCase();
+      if (!needle) return true;
+      return [artifact.artifact_id, artifact.format, artifact.path, artifact.checksum ?? ""].some((value) =>
+        value.toLowerCase().includes(needle),
+      );
+    })
+    .sort((a, b) => {
+      if (sort === "largest") return b.size_bytes - a.size_bytes;
+      if (sort === "format") return a.format.localeCompare(b.format) || a.artifact_id.localeCompare(b.artifact_id);
+      return 0;
+    });
+
   return (
     <section className="results-workspace">
       <div className="system-grid">
-        <Card>
-          <div className="system-card__label">Document ID</div>
-          <div className="system-card__value workspace-value">{result.document_id}</div>
-        </Card>
-        <Card>
-          <div className="system-card__label">Result status</div>
-          <div className="system-card__value">{result.status}</div>
-        </Card>
-        <Card>
-          <div className="system-card__label">Artifacts</div>
-          <div className="system-card__value">{result.artifacts.length}</div>
-        </Card>
+        <Card><div className="system-card__label">Document ID</div><div className="system-card__value workspace-value">{result.document_id}</div></Card>
+        <Card><div className="system-card__label">Result status</div><div className="system-card__value">{result.status}</div></Card>
+        <Card><div className="system-card__label">Artifacts</div><div className="system-card__value">{result.artifacts.length}</div></Card>
       </div>
 
       <Card className="artifact-card">
         <div className="section-heading">
-          <h2>Artifacts</h2>
-          <Badge tone="info">{result.artifacts.length} returned</Badge>
+          <div><h2>Artifacts</h2><p className="result-note">Review metadata returned by the results API.</p></div>
+          <Badge tone="info">{filtered.length} shown</Badge>
         </div>
 
         {result.artifacts.length === 0 ? (
-          <div className="empty-state">
-            <strong>No artifacts yet</strong>
-            <span>The backend returned an empty artifact collection for this document.</span>
-          </div>
+          <div className="empty-state"><strong>No artifacts yet</strong><span>The backend returned an empty artifact collection for this document.</span></div>
         ) : (
-          <div className="artifact-list">
-            {result.artifacts.map((artifact, index) => (
-              <ArtifactItem key={index} artifact={artifact} index={index + 1} />
-            ))}
-          </div>
+          <>
+            <div className="artifact-toolbar" aria-label="Artifact filters">
+              <label className="artifact-search">Search<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ID, format, path, checksum" /></label>
+              <label>Format<select value={format} onChange={(event) => setFormat(event.target.value)}><option value="all">All formats</option>{formats.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+              <label>Sort<select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}><option value="newest">API order</option><option value="largest">Largest first</option><option value="format">Format</option></select></label>
+            </div>
+            {filtered.length === 0 ? (
+              <div className="empty-state"><strong>No matching artifacts</strong><span>Try a different search or format filter.</span></div>
+            ) : (
+              <div className="artifact-list">
+                {filtered.map((artifact, index) => <ArtifactItem key={artifact.artifact_id} artifact={artifact} index={index + 1} />)}
+              </div>
+            )}
+          </>
         )}
       </Card>
     </section>
-  );
-}
-
-function ArtifactItem({ artifact, index }: { artifact: ResultArtifact; index: number }) {
-  return (
-    <details className="artifact-item" open={index === 1}>
-      <summary>
-        <span className="artifact-title"><strong>Artifact {index}</strong><span>{artifact.format}</span></span>
-        <Badge tone="neutral">{formatBytes(artifact.size_bytes)}</Badge>
-      </summary>
-      <div className="artifact-details">
-        <div className="artifact-meta">
-          <div><span>Artifact ID</span><strong>{artifact.artifact_id}</strong></div>
-          <div><span>Format</span><strong>{artifact.format}</strong></div>
-          <div><span>Size</span><strong>{formatBytes(artifact.size_bytes)}</strong></div>
-          <div><span>Checksum</span><strong className="artifact-break">{artifact.checksum ?? "Not supplied"}</strong></div>
-          <div><span>Path</span><strong className="artifact-break">{artifact.path}</strong></div>
-        </div>
-        <div className="artifact-integrity"><Badge tone={artifact.checksum ? "success" : "neutral"}>{artifact.checksum ? "Checksum supplied" : "No checksum"}</Badge><span>Metadata is read-only; no artifact contents are altered by this view.</span></div>
-      </div>
-    </details>
   );
 }
 
