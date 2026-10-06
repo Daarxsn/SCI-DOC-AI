@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "verify:release": "npm run build && test -f dist/index.html && test -s dist/index.html"
   },
   "dependencies": {
     "react": "^19.1.1",
