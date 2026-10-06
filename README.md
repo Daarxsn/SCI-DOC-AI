@@ -406,7 +406,14 @@ Those require domain-specific evaluation and real evidence.
 | F07 | Workflow handoff | Implemented |
 | F08 | Artifact provenance/review | Implemented |
 | F09 | Artifact review controls | Implemented; CI verification pending/failing fix |
-| F10 | Production release readiness | In progress |
+| F10 | Production release readiness | Implemented; CI evidence required |
+| F11 | Operational diagnostics | Implemented; CI evidence required |
+| F12 | Security hardening | Implemented; CI evidence required |
+| F13 | Runtime & model readiness | Implemented; CI evidence required |
+| F14 | Document → job handoff | Implemented; CI evidence required |
+| F15 | Results & artifact validation | Implemented; CI evidence required |
+| F16 | Accessibility & UX hardening | Implemented; CI evidence required |
+| F17 | Local E2E smoke verification | Implemented; CI evidence required |
 
 Phase status must be interpreted together with CI evidence. A phase is not called locked merely because its source files exist.
 
